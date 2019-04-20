@@ -6,7 +6,7 @@
 4. 遊戲開始 (Agent 最久者才有此按鈕)
 5. 聊天室
 
-![index](C:\Users\mm884\Desktop\yellow_card\public\index.png)
+![index](/public/index.png)
 
 ---
 
