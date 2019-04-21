@@ -8,6 +8,8 @@
 
 ![index](/public/index.png)
 
+![index](/public/waitingRoom.png)
+
 ---
 
 **Functions (包含功能):**
