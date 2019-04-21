@@ -1,19 +1,21 @@
 const {  parentPort } = require('worker_threads');
-
-function random(min, max) {
-  return Math.random() * (max - min) + min
-}
-
-const sorter = require("./test2-worker");
-
-const start = Date.now()
-let bigList = Array(1000000).fill().map( (_) => random(1,10000))
+var util = require('../util.js')
+const gamecore = require("./core.js");
+gamecore.init();
 
 // 你可以用这个方法从主线程接收消息
-parentPort.on('message', (msg) => {
-  console.log("Main thread finished on: ", (msg.timeDiff / 1000), " seconds...");
+parentPort.on('message', (body) => {
+  if(body.event == util.JOINGAME_EVENT){
+    gamecore.joinGame(body);
+  }
+
+  if(body.event == util.GETCARD_EVENT){
+    gamecore.getCard(body);
+  }
+  
+  console.log("Main thread body: ", body, util.JOINGAME_EVENT); 
 })
 
 
-sorter.sort(bigList);
-parentPort.postMessage({ val: sorter.firstValue, timeDiff: Date.now() - start});
+//return workers
+parentPort.postMessage("worker start waiting...");
