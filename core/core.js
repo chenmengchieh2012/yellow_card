@@ -1,9 +1,10 @@
 var util = require('../util.js')
 var cardmodule = require('./module.js')
-module.exports = {
-  players: [],
-  cardindex: [],
+var players= [];
+var cardindex= [];
 
+
+module.exports = {
   init: function(){
     console.log("[core] init");
     let i;
@@ -15,7 +16,8 @@ module.exports = {
   joinGame: function(msg) {
     console.log("[core] join");
     if(msg.playerid != null){
-        playsers.add(msg.playerid);
+        let id = msg.playerid
+        playsers.add({id:null});
     }
   },
 
@@ -27,13 +29,17 @@ module.exports = {
     }
   },
 
-  getCard: function(msg){
+  getCard: function(msg,cb){
     console.log("[core] getCard");
     let index = players.indexOf(msg.playerid) ;
     if(index> -1){
       players[index] = msg.playerid;
     }
-    return cardmodule.getCard();
+    let cb_getcard = function(index,context){
+      console.log("[core] context:",context);
+      cb(context);
+    }
+    cardmodule.getCard(util.QUESTION_CARD_TABLE,index,cb);
   }
 
 }

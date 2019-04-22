@@ -25,7 +25,8 @@ exports.addWorker = function(hashvalue){
 }
 
 exports.postMessage = function(hashvalue,body){
-  console.log("[main] postMessage:" + body.event +", msg: " + body.msg);
+  console.log("[main] postMessage:",hashvalue, JSON.stringify(body));
+  console.log("[main] workers",workers);
   let worker = workers[hashvalue];
   worker.postMessage(body);
 }
