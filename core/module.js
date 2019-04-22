@@ -37,25 +37,33 @@ function cb_getronumber(count){
 }
 
 
-function addCard(db,tablename,cardtext){
-  let stmt = db.prepare("INSERT INTO "+tablename+" (cardcontext) VALUES (?)");
-  stmt.run(cardtext);
-  stmt.finalize(); //operater finish
+module.exports = {
+  addCard: function(db,tablename,cardtext){
+    let stmt = db.prepare("INSERT INTO "+tablename+" (cardcontext) VALUES (?)");
+    stmt.run(cardtext);
+    stmt.finalize(); //operater finish
+  },
+
+  getCard: function(db,tablename,index,callback){
+    let sql = 'SELECT _id,cardcontext FROM '+tablename+' WHERE _id = ?'; 
+    db.get(sql, [index], (err, row) => {
+        callback(row._id,row.cardcontext)
+    });
+    
+  },
+
+  getRowNumbers: function(db,tablename,callback){
+    let sql = 'SELECT COUNT(*) as \'count\' FROM '+tablename;
+    let size;
+    db.get(sql, [], (err, row) => {
+        console.log("total row size in table: " +row.count);
+        callback(row.count);
+    });
+  }
+
+
 }
 
-function getCard(db,tablename,index,callback){
-  let sql = 'SELECT _id,cardcontext FROM '+tablename+' WHERE _id = ?'; 
-  db.get(sql, [index], (err, row) => {
-      callback(row._id,row.cardcontext)
-  });
-  
-}
 
-function getRowNumbers(db,tablename,callback){
-  let sql = 'SELECT COUNT(*) as \'count\' FROM '+tablename;
-  let size;
-  db.get(sql, [], (err, row) => {
-      console.log("total row size in table: " +row.count);
-      callback(row.count);
-  });
-}
+
+

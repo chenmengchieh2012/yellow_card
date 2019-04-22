@@ -1,4 +1,5 @@
 var util = require('../util.js')
+var cardmodule = require('./module.js')
 module.exports = {
   players: [],
   cardindex: [],
@@ -30,8 +31,9 @@ module.exports = {
     console.log("[core] getCard");
     let index = players.indexOf(msg.playerid) ;
     if(index> -1){
-      array.splice(index, 1);
+      players[index] = msg.playerid;
     }
+    return cardmodule.getCard();
   }
 
 }
