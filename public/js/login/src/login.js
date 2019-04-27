@@ -4,11 +4,23 @@ var hashFunc = function(s){
     return (h ^ h >>> 16) >>> 0;
 };
 
+var timestamp = function(){
+	return Math.floor(Date.now() / 1000);
+}
+
+var Avatar_list = [];
+
 var login = function(playerInfo){
-	let playerAvatar = playerInfo.playerAvatar ? \
+	let self = {};
+	let T = timestamp();
+	self.playerAvatar = playerInfo.playerAvatar ? \
 		Avatar_list[playerInfo.playerAvatar] : Avatar_list[0];
-	let playerName = (playerInfo.playerName.length > 0) ? \
-		playerInfo.playerName : Math.floor(Date.now() / 1000).toString();
-	let roomTag = (playerInfo.roomTag.length > 0) ? \
-		playerInfo.roomTag: "";
+	self.playerName = (playerInfo.playerName.length > 0) ? \
+		playerInfo.playerName : T.toString();
+	self.roomTag = (playerInfo.roomTag.length > 0) ? \
+		playerInfo.roomTag: T.toString();
+	self.playerID = hashFunc(self.playerName);
+	self.roomID = hashFunc(self.roomTag);
+
+	return self;
 };
