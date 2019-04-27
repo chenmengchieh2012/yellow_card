@@ -1,5 +1,6 @@
 const cluster = require('cluster');
 var io = require('socket.io');
+var core = require('./core.js')
 var workers = {};
 var serv_io;
 
@@ -11,9 +12,30 @@ function socketioInit(){
     }, 1000);
 
     // 接收來自於瀏覽器的資料
-    socket.on('client_data', function(data) {
-      console.log(data);
+    socket.on('client_message', function(data) {
+      sendMessagetoWorker(data);
+      console.log("Socketio get:" + JSON.stringify(data) );
     });
+  });
+}
+
+function sendMessagetoWorker(msg){
+  if(msg.hashTag == null || msg.hashTag == undefined){
+    return null;
+  }
+
+  if(workers[msg.hashTag] == undefined || workers[msg.hashTag] == null){
+    return null;
+  }
+
+  let worker = workers[msg.hashTag].worker;
+  worker.send(msg); // send to woekr process function
+}
+
+function workerprocess(){
+  process.on('message', (msg) => {
+    //process.send(msg);
+    console.log("worker get:" + JSON.stringify(msg) );
   });
 }
 
@@ -25,20 +47,23 @@ module.exports = {
         console.log('worker ${worker.process.pid} died');
       });
       worker.on('message', (msg) => { //worker send message to master
-        console.log(msg);
+        console.log("master get: " + msg);
       });
+      let coreModule = core.createModule()
 
-      worker.send('hi there');
+      // [TODO] init core here
+      {}
+
+      workers[hashTag] = {
+        "worker":worker,
+        "coremodule": coreModule
+      };
     },
 
-    workerprocess: function(){ //child
-      process.on('message', (msg) => {
-        process.send(msg);
-      });
-    },
-
+    workerprocess,
     startSocketio: function(server){ //master
       serv_io = io.listen(server);
       socketioInit();
-    }
+    },
+    sendMessagetoWorker
 }

@@ -1,39 +1,47 @@
 var util = require('../util.js')
 var cardmodule = require('./module.js')
-var players= [];
-var cardindex= [];
 
+
+function createCore(){
+  return {
+    "players":[],
+    "cardindex":[]
+  }
+}
 
 module.exports = {
-  init: function(){
+  createModule: function(){
+    var coremodule = createCore()
+
     console.log("[core] init");
     let i;
     for(i=0;i<util.MAX_TEXTCARD;i++){
-      cardindex.push(-1);
+      coremodule.cardindex.push(-1);
     }
+    return coremodule;
   },
 
-  joinGame: function(msg) {
+  joinGame: function(coremodule,msg) {
     console.log("[core] join");
     if(msg.playerid != null){
         let id = msg.playerid
-        playsers.add({id:null});
+        coremodule.players.add({id:null});
     }
   },
 
-  leaveGame: function(msg){
+  leaveGame: function(coremodule,msg){
     console.log("[core] leaveGame");
-    let index = players.indexOf(msg.playerid) ;
+    let index = coremodule.players.indexOf(msg.playerid) ;
     if(index> -1){
-      array.splice(index, 1);
+      coremodule.players.splice(index, 1);
     }
   },
 
-  getCard: function(msg,cb){
+  getCard: function(coremodule,msg,cb){
     console.log("[core] getCard");
-    let index = players.indexOf(msg.playerid) ;
+    let index = coremodule.players.indexOf(msg.playerid) ;
     if(index> -1){
-      players[index] = msg.playerid;
+      coremodule.players[index] = msg.playerid;
     }
     let cb_getcard = function(index,context){
       console.log("[core] context:",context);

@@ -72,3 +72,7 @@ join api: /joinroom, createroom api: /createroom
 
 使用 cookie 並設定 roomtag 作為房間識別機制。
 
+---
+
+todo split express and workers to two different service. use apis to connect with each others.
+
