@@ -52,9 +52,6 @@ module.exports = {
         serv_io.sockets.connected[envolop.socket_id].emit('test',"test");
       });
 
-      // [TODO] init core here
-      {}
-
       workers[hashTag] = worker;
     },
 

@@ -74,5 +74,9 @@ join api: /joinroom, createroom api: /createroom
 
 ---
 
-todo split express and workers to two different service. use apis to connect with each others.
+## 測試流程
+
+1. 使用postman 打 URL http//localhost:3000/createroom![test_step1](./readme_img/test_step1.png)
+2. 利用 https://amritb.github.io/socketio-client-tool/#url=aHR0cDovL2xvY2FsaG9zdDozMDAw&opt=&events=test，並設定以下參數，發送加入 房間 的程序![test_step2](/readme_img/test_step2.png)
+3. 
 
