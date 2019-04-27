@@ -4,7 +4,7 @@ var cardmodule = require('./module.js')
 
 function createCore(){
   return {
-    "players":[],
+    "players":{},
     "cardindex":[]
   }
 }
@@ -22,11 +22,23 @@ module.exports = {
   },
 
   joinGame: function(coremodule,msg) {
-    console.log("[core] join");
+    console.log("[core] join: " + JSON.stringify(msg));
     if(msg.playerid != null){
         let id = msg.playerid
-        coremodule.players.add({id:null});
+        coremodule.players[id] = {"socket_id":null};
     }
+    console.log("coremodule: "+ JSON.stringify(coremodule))
+  },
+
+  setSocketid: function(coremodule,msg,socketid) {
+    console.log("[core] setSocketid");
+    if(msg.playerid != null){
+        let id = msg.playerid
+        if(coremodule.players[id] != undefined){
+         coremodule.players[id].socket_id = socketid;
+        }
+    }
+    console.log("coremodule: "+ JSON.stringify(coremodule))
   },
 
   leaveGame: function(coremodule,msg){

@@ -1,6 +1,7 @@
 const cluster = require('cluster');
 var io = require('socket.io');
-var core = require('./core.js')
+var core = require('./core.js');
+var util = require('../util.js')
 var workers = {};
 var serv_io;
 
@@ -13,32 +14,32 @@ function socketioInit(){
 
     // 接收來自於瀏覽器的資料
     socket.on('client_message', function(data) {
-      sendMessagetoWorker(data);
-      console.log("Socketio get:" + JSON.stringify(data) );
+      console.log("[socketioInit] Socketio get:" + JSON.stringify(data) );
+      let socket_id = socket.id;
+      sendMessagetoWorker(data,socket_id);
     });
   });
 }
 
-function sendMessagetoWorker(msg){
-  if(msg.hashTag == null || msg.hashTag == undefined){
+function sendMessagetoWorker(req,socket_id){
+  console.log("[sendMessagetoWorker] req: "+req);
+  console.log("[sendMessagetoWorker] socket_id: "+socket_id);
+  if(req.hashTag == null || req.hashTag == undefined){
     return null;
   }
 
-  if(workers[msg.hashTag] == undefined || workers[msg.hashTag] == null){
+  if(workers[req.hashTag] == undefined || workers[req.hashTag] == null){
     return null;
   }
 
-  let worker = workers[msg.hashTag].worker;
-  worker.send(msg); // send to woekr process function
+  let worker = workers[req.hashTag];
+  let envolop = { 
+    "req":req,
+    "socket_id": socket_id
+  }
+  console.log("[sendMessagetoWorker]send...");
+  worker.send(envolop); // send to woekr process function
 }
-
-function workerprocess(){
-  process.on('message', (msg) => {
-    //process.send(msg);
-    console.log("worker get:" + JSON.stringify(msg) );
-  });
-}
-
 
 module.exports = {
     addWorker: function(hashTag){ //master
@@ -46,18 +47,15 @@ module.exports = {
       worker.on('exit', (worker, code, signal) => {
         console.log('worker ${worker.process.pid} died');
       });
-      worker.on('message', (msg) => { //worker send message to master
-        console.log("master get: " + msg);
+      worker.on('message', (envolop) => { //worker send message to master
+        console.log("master get: " + envolop);
+        serv_io.sockets.connected[envolop.socket_id].emit('test',"test");
       });
-      let coreModule = core.createModule()
 
       // [TODO] init core here
       {}
 
-      workers[hashTag] = {
-        "worker":worker,
-        "coremodule": coreModule
-      };
+      workers[hashTag] = worker;
     },
 
     workerprocess,
@@ -66,4 +64,29 @@ module.exports = {
       socketioInit();
     },
     sendMessagetoWorker
+}
+
+function workerprocess(){
+  let coreModule = core.createModule()
+  process.on('message', (envolop) => {
+    //process.send(msg);
+    console.log("worker get:" + JSON.stringify(envolop.req) );
+    if(envolop.req.event == util.JOINGAME_EVENT){
+      core.joinGame(coreModule,envolop.req.msg);
+      
+      // coreModule.cardindex[i] = 1;
+      // i++;
+      console.log("worker join" + JSON.stringify(coreModule) );
+    }
+
+    //test socketio message: {"event": "setsocket","hashTag": "testhashtag","msg":{"playerid": "WTF"}}
+    if(envolop.req.event == util.SETSOCKET_EVENT){      
+      console.log("[workerprocess] setSocketid: "+envolop.socket_id);
+      console.log("[workerprocess] req: " + JSON.stringify(envolop.req));
+      core.setSocketid(coreModule,envolop.req.msg,envolop.socket_id);
+      if(envolop.socket_id != null){
+        process.send(envolop);
+      }
+    }
+  });
 }

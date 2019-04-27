@@ -33,7 +33,7 @@ if (cluster.isMaster) {
 
     if(checkexist(req.body)){
       req.body.hashTag = roomTag;
-      workerHandler.sendMessagetoWorker(req.body);
+      workerHandler.sendMessagetoWorker(req.body,null);
       res.cookie('roomtag', TEST_HASHTAG);
       res.redirect(302, '/room');
     }else{
@@ -52,7 +52,7 @@ if (cluster.isMaster) {
     //MJ-20190421: send join message to worker.
     if(checkexist(req.body)){
       req.body.hashTag = roomTag;
-      workerHandler.sendMessagetoWorker(req.body);
+      workerHandler.sendMessagetoWorker(req.body,null);
       res.status(200);
       res.redirect(302, '/room');
     }else{
