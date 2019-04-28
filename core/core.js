@@ -50,16 +50,39 @@ module.exports = {
   },
 
   getCard: function(coremodule,msg,cb){
-    console.log("[core] getCard");
-    let index = coremodule.players.indexOf(msg.playerid) ;
-    if(index> -1){
-      coremodule.players[index] = msg.playerid;
+    console.log("[core] getCard" + JSON.stringify(coremodule));
+    if(msg.playerid == null || msg.playerid == undefined){
+      return;
     }
+    if(coremodule.players[msg.playerid] == undefined){
+      return;
+    }
+    if(coremodule.players[msg.playerid].socket_id == null){
+      return;
+    }
+
+    let random_index = util.getRandomInt(util.MAX_QUESTIONCARD);
+    while(coremodule.cardindex[random_index] != -1 && random_index <= util.MAX_QUESTIONCARD){
+      random_index++;
+    }
+
+    if(random_index == util.MAX_QUESTIONCARD){
+      for(i=0;i<util.MAX_QUESTIONCARD;i++){
+        coremodule.cardindex[i] = -1;
+      }
+    }
+    random_index = util.getRandomInt(util.MAX_QUESTIONCARD);
+
+    coremodule.cardindex[random_index] = coremodule.players[msg.playerid].socket_id;
+    console.log("coremodule: "+ JSON.stringify(coremodule));
+
     let cb_getcard = function(index,context){
       console.log("[core] context:",context);
       cb(context);
     }
-    cardmodule.getCard(util.QUESTION_CARD_TABLE,index,cb);
+
+    console.log("random_index: "+ (random_index+1));
+    cardmodule.getCard(util.QUESTION_CARD_TABLE,random_index+1,cb_getcard);
   }
 
 }
