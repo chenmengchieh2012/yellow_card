@@ -28,13 +28,13 @@ if (cluster.isMaster) {
   app.post('/createroom', function (req, res) {
     console.log(JSON.stringify(req.body));
 
-    let roomTag = TEST_HASHTAG;
+    let roomTag = req.body.hashTag;
     workerHandler.addWorker(roomTag);
 
     if(checkexist(req.body)){
-      req.body.hashTag = roomTag;
+      // req.body.hashTag = roomTag;
       workerHandler.sendMessagetoWorker(req.body,null);
-      res.cookie('roomtag', TEST_HASHTAG);
+      res.cookie('roomtag', roomTag);
       res.redirect(302, '/room');
     }else{
       res.sendStatus(400);
