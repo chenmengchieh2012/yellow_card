@@ -62,7 +62,7 @@ module.exports = {
     }
 
     let random_index = util.getRandomInt(util.MAX_QUESTIONCARD);
-    while(coremodule.cardindex[random_index] != -1 && random_index <= util.MAX_QUESTIONCARD){
+    while(coremodule.cardindex[random_index] != -1 && random_index < util.MAX_QUESTIONCARD){
       random_index++;
     }
 
@@ -70,8 +70,9 @@ module.exports = {
       for(i=0;i<util.MAX_QUESTIONCARD;i++){
         coremodule.cardindex[i] = -1;
       }
+      random_index = util.getRandomInt(util.MAX_QUESTIONCARD);
     }
-    random_index = util.getRandomInt(util.MAX_QUESTIONCARD);
+    
 
     coremodule.cardindex[random_index] = coremodule.players[msg.playerid].socket_id;
     console.log("coremodule: "+ JSON.stringify(coremodule));
