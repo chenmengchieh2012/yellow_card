@@ -44,10 +44,9 @@ if (cluster.isMaster) {
   app.post('/joinroom', function (req, res) {
     console.log(JSON.stringify(req.body));
     
-    let roomTag = req.cookie('roomtag', TEST_HASHTAG);
     if(roomTag == null){
       roomTag = req.body.roomTag;
-      res.cookie('roomtag', TEST_HASHTAG);
+      res.cookie('roomtag', roomTag);
     }
     //MJ-20190421: send join message to worker.
     if(checkexist(req.body)){
