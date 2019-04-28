@@ -38,9 +38,8 @@ if (cluster.isMaster) {
     workerHandler.addWorker(roomTag);
 
     if(checkexist(req.body)){
-      req.body.hashTag = roomTag;
       workerHandler.sendMessagetoWorker(req.body,null);
-      res.cookie('roomtag', TEST_HASHTAG);
+      res.cookie('roomtag', roomTag);
       res.redirect(302, '/room');
     }else{
       res.sendStatus(400);
@@ -49,17 +48,16 @@ if (cluster.isMaster) {
 
   app.post('/joinroom', function (req, res) {
     console.log(JSON.stringify(req.body));
-    
-    let roomTag = req.cookie('roomtag', TEST_HASHTAG);
-    if(roomTag == null){
-      roomTag = req.body.roomTag;
-      res.cookie('roomtag', TEST_HASHTAG);
-    }
+    let roomTag = req.body.roomTag;
+
     //MJ-20190421: send join message to worker.
     if(checkexist(req.body)){
-      req.body.hashTag = roomTag;
-      workerHandler.sendMessagetoWorker(req.body,null);
-      res.status(200);
+      let ret = workerHandler.sendMessagetoWorker(req.body,null);
+      if(ret == null){
+        res.sendStatus(400);
+        return;
+      }
+      res.cookie('roomtag', roomTag);
       res.redirect(302, '/room');
     }else{
       res.sendStatus(400);

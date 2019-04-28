@@ -38,9 +38,11 @@ module.exports = {
   },
 
   getCard: function(tablename,index,callback){
-    let sql = 'SELECT _id,cardcontext FROM '+tablename+' WHERE _id = ?'; 
+    console.log("tablename: "+ tablename + "index: " + index);
+    let sql = 'SELECT _id,cardcontext FROM '+tablename+' WHERE _id = ?';
+    console.log("sql: "+ sql); 
     this.db.get(sql, [index], (err, row) => {
-        callback(row._id,row.cardcontext)
+      callback(row._id,row.cardcontext);
     });
     
   },

@@ -49,7 +49,17 @@ module.exports = {
       });
       worker.on('message', (envolop) => { //worker send message to master
         console.log("master get: " + envolop);
-        serv_io.sockets.connected[envolop.socket_id].emit('test',"test");
+
+        if(envolop.req.event == util.SETSOCKET_EVENT){
+          serv_io.sockets.connected[envolop.socket_id].emit('response', 
+            {"evnet":envolop.req.event,"msg":envolop.res});
+        }
+
+        if(envolop.req.event == util.GETCARD_EVENT){
+          serv_io.sockets.connected[envolop.socket_id].emit('response', 
+            {"evnet":envolop.req.event,"msg":envolop.res});
+        }
+        
       });
 
       workers[hashTag] = worker;
@@ -82,8 +92,17 @@ function workerprocess(){
       console.log("[workerprocess] req: " + JSON.stringify(envolop.req));
       core.setSocketid(coreModule,envolop.req.msg,envolop.socket_id);
       if(envolop.socket_id != null){
+        envolop.res = envolop.socket_id;
         process.send(envolop);
       }
+    }
+
+    if(envolop.req.event == util.GETCARD_EVENT){
+      console.log("[workerprocess] req: " + JSON.stringify(envolop.req));
+      core.getCard(coreModule,envolop.req.msg,(card_context) => {
+        envolop.res = card_context;
+        process.send(envolop);
+      });
     }
   });
 }
