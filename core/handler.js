@@ -6,7 +6,7 @@ var workers = {};
 var serv_io;
 
 function socketioInit(){
-  serv_io.set('log level', 1); // 關閉 debug 訊息
+  // serv_io.set('log level', 1); // 關閉 debug 訊息
   serv_io.sockets.on('connection', function(socket) {
     setInterval(function() {
       socket.emit('date', {'date': new Date()});
@@ -22,7 +22,7 @@ function socketioInit(){
 }
 
 function sendMessagetoWorker(req,socket_id){
-  console.log("[sendMessagetoWorker] req: "+req);
+  console.log("[sendMessagetoWorker] req: "+JSON.stringify(req));
   console.log("[sendMessagetoWorker] socket_id: "+socket_id);
   if(req.hashTag == null || req.hashTag == undefined){
     return "400";
