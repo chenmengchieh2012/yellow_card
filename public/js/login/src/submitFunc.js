@@ -12,6 +12,7 @@ var submitFunc = function(self){
 	var data = {
 		playerid: self.msg.playerID,
 		roomid: self.msg.roomID,
+		playername: self.msg.playerName
 		// playeravatar: self.msg.playerAvater
 	};
 
@@ -24,7 +25,7 @@ var submitFunc = function(self){
 
  	let table = [{
  		name: 'event',
- 		value: self.msg.playerName
+ 		value: "join"
  	},{
  		name: 'hashTag',
  		value: self.msg.roomTag
