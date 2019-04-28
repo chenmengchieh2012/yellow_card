@@ -49,7 +49,7 @@ module.exports = {
     }
   },
 
-  getCard: function(coremodule,msg,cb){
+  getQuestionCard: function(coremodule,msg,cb){
     console.log("[core] getCard" + JSON.stringify(coremodule));
     if(msg.playerid == null || msg.playerid == undefined){
       return;

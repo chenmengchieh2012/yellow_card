@@ -25,11 +25,11 @@ function sendMessagetoWorker(req,socket_id){
   console.log("[sendMessagetoWorker] req: "+req);
   console.log("[sendMessagetoWorker] socket_id: "+socket_id);
   if(req.hashTag == null || req.hashTag == undefined){
-    return null;
+    return "400";
   }
 
   if(workers[req.hashTag] == undefined || workers[req.hashTag] == null){
-    return null;
+    return "400";
   }
 
   let worker = workers[req.hashTag];
@@ -39,6 +39,7 @@ function sendMessagetoWorker(req,socket_id){
   }
   console.log("[sendMessagetoWorker]send...");
   worker.send(envolop); // send to woekr process function
+  return "200";
 }
 
 module.exports = {
@@ -97,7 +98,7 @@ function workerprocess(){
       }
     }
 
-    if(envolop.req.event == util.GETCARD_EVENT){
+    if(envolop.req.event == util.GET_QUESTIONCARD_EVENT){
       console.log("[workerprocess] req: " + JSON.stringify(envolop.req));
       core.getCard(coreModule,envolop.req.msg,(card_context) => {
         envolop.res = card_context;

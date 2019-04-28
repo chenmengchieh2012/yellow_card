@@ -1,6 +1,7 @@
 module.exports = Object.freeze({
   JOINGAME_EVENT:"join",
-  GETCARD_EVENT:"getcard",
+  GET_QUESTIONCARD_EVENT:"getquestioncard",
+  GET_TEXTCARD_EVENT:"gettextcard",
   SETSOCKET_EVENT:"setsocket",
 
   MAX_TEXTCARD:5,

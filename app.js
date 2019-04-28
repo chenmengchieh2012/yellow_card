@@ -47,7 +47,7 @@ if (cluster.isMaster) {
     //MJ-20190421: send join message to worker.
     if(checkexist(req.body)){
       let ret = workerHandler.sendMessagetoWorker(req.body,null);
-      if(ret == null){
+      if(ret == "400"){
         res.sendStatus(400);
         return;
       }
