@@ -27,7 +27,7 @@ if (cluster.isMaster) {
     res.status(200)
     res.setHeader('Content-Type', 'text/html');
     res.cookie('roomtag', TEST_HASHTAG);
-    res.send("<h5> room </h5>");
+    res.sendFile(__dirname + "/public/js/room/room.html");
     
   });
 

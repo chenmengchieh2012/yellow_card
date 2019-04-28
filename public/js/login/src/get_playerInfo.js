@@ -15,9 +15,8 @@ var get_playerInfo = function(func){
 	let T = timestamp();
 	let playerName = document.getElementById("playerName").value;
 	let roomTag = document.getElementById("roomTag").value;
-	// self.playerAvatar = playerInfo.playerAvatar ? 
-	// 	Avatar_list[playerInfo.playerAvatar] : Avatar_list[0];
-	if(func === 'joinroom' && roomTag.length < 0){
+	let avatar_index = document.getElementById("playerAvatar").getAttribute("alt");
+	if(func === 'joinroom' && roomTag.length < 6){
 		self.roomTag = false;
 	}else if(func === 'joinroom' && roomTag.length > 0){
 		self.roomID = hashFunc(roomTag);
@@ -28,6 +27,7 @@ var get_playerInfo = function(func){
 	}
 	self.playerName = (playerName.length > 0) ? playerName : T.toString();
 	self.playerID = hashFunc(self.playerName);
+	self.playerAvatar = avatar_index;
 
 	console.log(JSON.stringify(self));
 

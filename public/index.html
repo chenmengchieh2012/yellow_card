@@ -1,9 +1,7 @@
 <html>
 <head>
-	<title>UserStartup</title>
-	<!-- <script src="js/anseki-plain-draggable/src/plain-draggable.min.js"></script> -->
+	<title>黃牌桌遊 Online</title>
 	<!-- Tocas UI：CSS 與元件 -->
-
 	<link rel="stylesheet" 
 		href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
 	<!-- Tocas JS：模塊與 JavaScript 函式 -->
@@ -14,6 +12,8 @@
 	<!-- load javascript file -->
 	<script src="js/login/src/get_playerInfo.js"></script>
 	<script src="js/login/src/submitFunc.js"></script>
+	<script src="js/login/src/avatar.js"></script>
+	<script src="js/login/src/btnClick.js"></script>
 	<!-- jQuery -->
 	<script
 	  src="https://code.jquery.com/jquery-3.4.0.min.js"
@@ -21,55 +21,71 @@
 	  crossorigin="anonymous"></script>
 	<!-- load css file -->
 	<link rel="stylesheet" type="text/css" href="js/login/css/avatar.css">
+	<link rel="stylesheet" type="text/css" href="js/login/css/body.css">
 </head>
 
 <body>
-	<!-- <div style="background-color: gray; height:100%; width:100%;">
-	  <div id="draggable" style="background-color: red; height:24px; width:200px;">Drag This</div>
+	<div id="header">
+		<div class="ts massive heading fluid center aligned slate">
+		    <div class="image">
+		        <img src="js/login/icons/bg_title.jpg">
+		    </div>
+		    <span class="header" style="color:black;">
+		    	黃牌桌遊 Online
+		    </span>
+		    <span class="description" style="color:black;">
+		    	線上與好友一同遊玩黃牌。
+		    </span>
+		</div>
 	</div>
-	<script type="text/javascript">
-		draggable = new PlainDraggable(document.getElementById('draggable'));
-	</script> -->
-	<h2>Avatar</h2>
-	<img src="js/login/avatar_img/avatar1.png" 
-		alt="Avatar" class="avatar" id="playerAvatar">
-	<div class="ts form">
-    	<div class="field">
-	        <label>你的名字</label>
-	        <input type="text" id="playerName">
-	        <small>這個欄位必須填寫。</small>
-	    </div>
+	<div id="left-side"></div>
+	<div id="right-side"></div>
+	<div id="center">
+		<br/><br/>
+		<div id="avatar">
+			<br/><br/><br/><br/><br/><br/>
+			<div id="avatar_block" onclick="changeAvatar()">
+				<img src="js/login/avatar_img/1.png" 
+					alt="1" class="avatar" id="playerAvatar" />
+			</div>
+			<p>點擊圖片更換</p>
+		</div>
+		<br/><br/><br/>
+		<div id="form">
+			<div class="ts form">
+		    	<div class="field">
+			        <label>你的名字</label>
+			        <input type="text" id="playerName" placeholder="">
+			        <small>這個欄位必須填寫。</small>
+			    </div>
+			</div>
+			<br/><br/>
+			<div class="ts form">
+		    	<div class="field" id="tagfield">
+			        <label>房間標籤</label>
+			        <input type="text" id="roomTag" placeholder="548787">
+			        <small>如果要加入遊戲則必須填寫此欄位。 ex: 123456</small>
+			    </div>
+			</div>
+		</div>
+		<div id="btn">
+			<br/><br/><br/><br/>
+			<div id="btn_block">
+				<div id="left-btn">
+					<button class="ts positive left floated button" type="submit"  
+					onclick="return btnClick('createroom')">創建遊戲</button>
+				</div>
+				<div id="right-btn">
+					<button class="ts primary  right floated button" type="submit"
+						onclick="return btnClick('joinroom')">加入遊戲</button>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="ts form">
-    	<div class="field" id="tagfield">
-	        <label>房間標籤</label>
-	        <input type="text" id="roomTag">
-	        <small>如果要加入遊戲則必須填寫此欄位。 ex: #123456</small>
-	    </div>
-	</div>
-	<button class="ts positive button" type="submit"
-		onclick="return btnClick('createroom')">創建遊戲</button>
-	<button class="ts primary button" type="submit"
-		onclick="return btnClick('joinroom')">加入遊戲</button>
-
-
-
-	<!-- send data to the server -->
-	<script type="text/javascript">
-		function btnClick(func){
-			var msg = get_playerInfo(func);
-			if(!msg.roomTag){
-				let tagfield = document.getElementById("tagfield");
-				tagfield.setAttribute("class", "error field");
-				return false;
-			}
-			var self = {
-				msg:msg,
-				func:func
-			};
-			return submitFunc(self);
-		}
-	</script>
+	<div id="footer"></div>
+	
 </body>
 
 </html>
+
+<!-- avatar website : https://www.iconfinder.com/search/?q=avatar -->
