@@ -4,6 +4,7 @@ var util = require('./util.js')
 var app = module.exports.app = express();
 var server = http.createServer(app);
 var path = require('path');
+var bodyParser = require('body-parser');
 
 var workerHandler = require('./core/handler.js')
 const cluster = require('cluster');
@@ -15,6 +16,11 @@ const TEST_HASHTAG = "testhashtag";
 if (cluster.isMaster) {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
+
+  app.get('/', function(req, res){
+  	res.sendFile('index.html');
+  });
 
 
   app.get('/room', function (req, res) {
@@ -28,7 +34,7 @@ if (cluster.isMaster) {
   app.post('/createroom', function (req, res) {
     console.log(JSON.stringify(req.body));
 
-    let roomTag = TEST_HASHTAG;
+    let roomTag = req.body.hashTag;
     workerHandler.addWorker(roomTag);
 
     if(checkexist(req.body)){

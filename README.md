@@ -8,9 +8,9 @@
 4. 遊戲開始 (Agent 最久者才有此按鈕)
 5. 聊天室
 
-![index](/public/index.png)
+![index](/readme_img/index.png)
 
-![index](/public/waitingRoom.png)
+![index](/readme_img/waitingRoom.png)
 
 ---
 
