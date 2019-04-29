@@ -159,7 +159,7 @@ module.exports = {
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
     coremodule.ontable.textcard.push({
-      "playerid":msg.playerid,,
+      "playerid":msg.playerid,
       "cardIndex":msg.cardIndex,
       "cardContext":msg.cardContext
     });
