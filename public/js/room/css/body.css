@@ -1,0 +1,92 @@
+:root {
+	--center-width: 800px;
+	--left-side-width: auto;
+	--left-side-hieght: 320px;
+	--right-side-width: var(--left-side-width);
+	--right-side-hieght: 250px;
+	--player-room-info-block-hieght: 60px;
+	--chat-hieght: 650px;
+	--chat-width: 780px;
+	--player-state-block-hieght: 200px;
+	--chat-block-hieght: 550px;
+	--chat-container-hieght: 530px;
+	--msg-box-width: auto;
+	--footer-hieght: 80px;
+	--form-width: auto;
+	--btn-width: var(--chat-width);
+	--btn-hieght: 80px;
+}
+
+#header {
+	text-align: center;
+}
+
+#center {
+  	margin: auto;
+  	width: var(--center-width);
+}
+
+#left-side {
+	text-align: center;
+	float: left;
+	width: var(--left-side-width);
+	height: var(--left-side-hieght);
+}
+
+#player-state-block {
+	height: var(--player-state-block-hieght);
+}
+
+#right-side {
+	text-align: center;
+	float: right;
+	width: var(--right-side-width);
+	height: var(--right-side-hieght);
+}
+
+#player-room-info-block {
+	height: var(--player-room-info-block-hieght);
+}
+
+#playerName {
+	float: left;
+}
+
+#tagnumber {
+	font-size: 16px;
+}
+
+#chat {
+	height: var(--chat-hieght);
+	width: var(--chat-width);
+}
+
+#chat-block {
+	height: var(--chat-block-hieght);
+}
+
+#chat-container {
+	height: var(--chat-container-hieght);
+}
+
+#msg-box {
+	width: var(--msg-box-width);
+}
+
+#form {
+	width: var(--form-width);
+}
+
+#btn {
+	text-align: center;
+	clear:both;
+	width: var(--btn-width);
+	height: var(--btn-hieght);
+}
+
+#footer {
+	text-align: center;
+	height: var(--footer-hieght);
+	float: bottom;
+	clear: both;
+}

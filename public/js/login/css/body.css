@@ -40,7 +40,7 @@
 	text-align: center;
 	height: var(--footer-hieght);
 	float: bottom;
-	clear:both;
+	clear: both;
 }
 
 #avatar {

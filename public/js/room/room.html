@@ -1,9 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>room</title>
+	<title>黃牌桌遊 Online</title>
+	<!-- Tocas UI：CSS 與元件 -->
+	<link rel="stylesheet" 
+		href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
+	<!-- Tocas JS：模塊與 JavaScript 函式 -->
+	<script 
+		src="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.js">
+	</script>
+
+	<!-- load socket.io -->
+	<script 
+		src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js">
+	</script>
+
+	<!-- load javascript file -->
+	<script src="js/room/src/playerState.js"></script>
+	<script src="js/room/src/startFunc.js"></script>
+	<script src="js/room/src/leaveFunc.js"></script>
+	<script src="js/room/src/chat.js"></script>
+	<script src="js/room/src/btnClick.js"></script>
+	<script src="js/room/src/socketio.js"></script>
+	<script src="js/room/src/onload.js"></script>
+	<!-- jQuery -->
+	<script
+	  src="https://code.jquery.com/jquery-3.4.0.min.js"
+	  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+	  crossorigin="anonymous"></script>
+	<!-- load css file -->
+	<link rel="stylesheet" type="text/css" href="js/room/css/avatar.css">
+	<link rel="stylesheet" type="text/css" href="js/room/css/body.css">
 </head>
 <body>
-	room
+	<div id="header">
+		<div class="ts massive heading fluid center aligned slate">
+		    <div class="image">
+		        <img src="js/login/icons/bg_title.jpg">
+		    </div>
+		    <span class="header" style="color:black;">
+		    	黃牌桌遊 Online
+		    </span>
+		    <span class="description" style="color:black;">
+		    	線上與好友一同遊玩黃牌。
+		    </span>
+		</div>
+		<br/>
+	</div>
+	<div id="right-side"></div>
+	<div id="left-side">
+		<div id="player-state-block">
+			
+		</div>
+	</div>
+	<div id="center">
+		<div id="player-room-info-block">
+			<div class="ts three column very narrow container grid">
+    			<div class="column">
+    				<div class="ts grid">
+						<div class="four wide column">
+					        <img src="js/avatar_img/3.png" 
+					        	alt="3" id="selfAvatar" />
+					    </div>
+					    <div class="twelve wide column">
+						    <h3 id="playerName">玩家名字</h3>
+						</div>
+					</div>
+    			</div>
+    			<div class="column"></div>
+			    <div class="column">
+			    	<div id="room-info-block">
+						<button class="ts right labeled icon mini button" id="roomTag"
+							onclick="roomTag_copy()">
+						    <!-- <i class="clone icon"></i> -->
+						</button>
+					</div>
+			    </div>
+			</div>
+		</div>
+		<div id="chat">
+			<div id="chat-block">
+				<div class="ts container segment" id="chat-container">
+					<div class="ts grid">
+						<div class="two wide column">
+					        <img src="js/avatar_img/3.png" 
+					        	alt="3" id="playerAvatar" />
+					    </div>
+					    <div class="fourteen wide column">
+						    <div class="ts outlined message"
+						    	style="float: left;" id="msg-box">
+						    	我在剛剛發出了一則垃圾訊息，你...看到了嗎。
+						    </div>
+						</div>
+					</div>
+					<div class="ts grid">
+					    <div class="fourteen wide column">
+						    <div class="ts outlined message"
+						    	style="float: right;" id="msg-box">
+						    	我在剛剛發出了一則垃圾訊息，你...看到了嗎。
+						    </div>
+						</div>
+						<div class="two wide column">
+					        <img src="js/avatar_img/2.png" 
+					        	alt="2" id="playerAvatar" />
+					    </div>
+					</div>
+				</div>
+			</div>
+			<div id="typein-block">
+				<div class="ts form">
+				    <div class="inline field">
+				        <input id="msg" type="text" placeholder="請開始你的幹話..."
+				        	autocomplete="off" />
+				        <button class="ts circular icon button">
+						    <i class="send icon"></i>
+						</button>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div id="btn">
+			<div id="left-btn">
+				<button class="ts positive left floated button" type="submit"  
+				onclick="return btnClick('startGame')">開始遊戲</button>
+			</div>
+			<div id="right-btn">
+				<button class="ts negative right floated button" type="submit"
+					onclick="return btnClick('leaveGame')">離開遊戲</button>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

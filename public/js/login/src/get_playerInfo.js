@@ -8,8 +8,6 @@ var timestamp = function(){
 	return Math.floor(Date.now() / 1000);
 }
 
-var Avatar_list = ["0", "1", "2", "3"];
-
 var get_playerInfo = function(func){
 	let self = {};
 	let T = timestamp();
@@ -30,6 +28,8 @@ var get_playerInfo = function(func){
 	self.playerAvatar = avatar_index;
 
 	console.log(JSON.stringify(self));
+	
+	localStorage.setItem('userData', JSON.stringify(self));
 
 	return self;
 };

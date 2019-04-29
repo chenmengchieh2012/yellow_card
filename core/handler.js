@@ -39,6 +39,10 @@ function sendMessagetoWorker(req,socket_id){
   }
   console.log("[sendMessagetoWorker]send...");
   worker.send(envolop); // send to woekr process function
+  /*
+  * [ 留言 ] : KW
+  * [ 內容 ] : 信封的拼法是 "envelope"
+  */
   return "200";
 }
 
