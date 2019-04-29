@@ -18,6 +18,18 @@ function socketioInit(){
       let socket_id = socket.id;
       sendMessagetoWorker(data,socket_id);
     });
+
+    socket.on('join_chat_room', function(data) {
+      socket.join(data.roomtag);
+    });
+
+    socket.on('read_chat_message',function(data){
+      socket.broadcast.to(data.roomtag).emit({
+        "palyerid":data.playerid,
+        "chatMessage":data.chatMessage
+      })
+    })
+
   });
 }
 
@@ -33,12 +45,12 @@ function sendMessagetoWorker(req,socket_id){
   }
 
   let worker = workers[req.hashTag];
-  let envolop = { 
+  let envelope = { 
     "req":req,
     "socket_id": socket_id
   }
   console.log("[sendMessagetoWorker]send...");
-  worker.send(envolop); // send to woekr process function
+  worker.send(envelope); // send to woekr process function
   return "200";
 }
 
@@ -48,17 +60,17 @@ module.exports = {
       worker.on('exit', (worker, code, signal) => {
         console.log('worker ${worker.process.pid} died');
       });
-      worker.on('message', (envolop) => { //worker send message to master
-        console.log("master get: " + envolop);
+      worker.on('message', (envelope) => { //worker send message to master
+        console.log("master get: " + envelope);
 
-        if(envolop.req.event == util.SETSOCKET_EVENT){
-          serv_io.sockets.connected[envolop.socket_id].emit('response', 
-            {"evnet":envolop.req.event,"msg":envolop.res});
+        if(envelope.req.event == util.SETSOCKET_EVENT){
+          serv_io.sockets.connected[envelope.socket_id].emit('response', 
+            {"evnet":envelope.req.event,"msg":envelope.res});
         }
 
-        if(envolop.req.event == util.GETCARD_EVENT){
-          serv_io.sockets.connected[envolop.socket_id].emit('response', 
-            {"evnet":envolop.req.event,"msg":envolop.res});
+        if(envelope.req.event == util.GET_QUESTIONCARD_EVENT){
+          serv_io.sockets.connected[envelope.socket_id].emit('response', 
+            {"evnet":envelope.req.event,"msg":envelope.res});
         }
         
       });
@@ -76,11 +88,11 @@ module.exports = {
 
 function workerprocess(){
   let coreModule = core.createModule()
-  process.on('message', (envolop) => {
+  process.on('message', (envelope) => {
     //process.send(msg);
-    console.log("worker get:" + JSON.stringify(envolop.req) );
-    if(envolop.req.event == util.JOINGAME_EVENT){
-      core.joinGame(coreModule,envolop.req.msg);
+    console.log("worker get:" + JSON.stringify(envelope.req) );
+    if(envelope.req.event == util.JOINGAME_EVENT){
+      core.joinGame(coreModule,envelope.req.msg);
       
       // coreModule.cardindex[i] = 1;
       // i++;
@@ -88,21 +100,21 @@ function workerprocess(){
     }
 
     //test socketio message: {"event": "setsocket","hashTag": "testhashtag","msg":{"playerid": "WTF"}}
-    if(envolop.req.event == util.SETSOCKET_EVENT){      
-      console.log("[workerprocess] setSocketid: "+envolop.socket_id);
-      console.log("[workerprocess] req: " + JSON.stringify(envolop.req));
-      core.setSocketid(coreModule,envolop.req.msg,envolop.socket_id);
-      if(envolop.socket_id != null){
-        envolop.res = envolop.socket_id;
-        process.send(envolop);
+    if(envelope.req.event == util.SETSOCKET_EVENT){      
+      console.log("[workerprocess] setSocketid: "+envelope.socket_id);
+      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
+      core.setSocketid(coreModule,envelope.req.msg,envelope.socket_id);
+      if(envelope.socket_id != null){
+        envelope.res = envelope.socket_id;
+        process.send(envelope);
       }
     }
 
-    if(envolop.req.event == util.GET_QUESTIONCARD_EVENT){
-      console.log("[workerprocess] req: " + JSON.stringify(envolop.req));
-      core.getCard(coreModule,envolop.req.msg,(card_context) => {
-        envolop.res = card_context;
-        process.send(envolop);
+    if(envelope.req.event == util.GET_QUESTIONCARD_EVENT){
+      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
+      core.getCard(coreModule,envelope.req.msg,(card_context) => {
+        envelope.res = card_context;
+        process.send(envelope);
       });
     }
   });

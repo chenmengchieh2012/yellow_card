@@ -26,7 +26,6 @@ if (cluster.isMaster) {
   app.get('/room', function (req, res) {
     res.status(200)
     res.setHeader('Content-Type', 'text/html');
-    res.cookie('roomtag', TEST_HASHTAG);
     res.send("<h5> room </h5>");
     
   });
