@@ -41,7 +41,8 @@ module.exports = {
     console.log("tablename: "+ tablename + "index: " + index);
     let sql = 'SELECT _id,cardcontext FROM '+tablename+' WHERE _id = ?';
     console.log("sql: "+ sql); 
-    this.db.get(sql, [index], (err, row) => {
+    this.db.get(sql, index, (err, row) => {
+      console.log(row);
       callback(row._id,row.cardcontext);
     });
     

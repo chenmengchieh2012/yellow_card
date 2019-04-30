@@ -33,6 +33,10 @@ if (cluster.isMaster) {
   app.post('/createroom', function (req, res) {
     console.log(JSON.stringify(req.body));
     let roomTag = req.body.hashTag;
+    if(workerHandler.checkExistWorker(roomTag)){
+      console.log("return");
+      return;
+    }
     workerHandler.addWorker(roomTag);
 
     if(checkexist(req.body)){
@@ -46,8 +50,11 @@ if (cluster.isMaster) {
 
   app.post('/joinroom', function (req, res) {
     console.log(JSON.stringify(req.body));
-    let roomTag = req.body.roomTag;
-
+    let roomTag = req.body.hashTag;
+    if(!workerHandler.checkExistWorker(roomTag)){
+      console.log("return");
+      return;
+    }
     //MJ-20190421: send join message to worker.
     if(checkexist(req.body)){
       let ret = workerHandler.sendMessagetoWorker(req.body,null);

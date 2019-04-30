@@ -40,9 +40,12 @@ module.exports = {
 
     console.log("[core] init");
     let i;
-    for(i=0;i<util.MAX_TEXTCARD;i++){
-      coremodule.questioncard.push(i+1);
+    for(i=0;i<util.MAX_TEXTCARD;i++){      
       coremodule.textcard.push(i+1);
+    }
+
+    for(i=0;i<util.MAX_QUESTIONCARD;i++){
+      coremodule.questioncard.push(i+1);
     }
     shuffleArray(coremodule.questioncard);
     shuffleArray(coremodule.textcard);
@@ -90,7 +93,7 @@ module.exports = {
     }
 
     let cardIndex = coremodule.questioncard.splice(0,1);
-    history.push(createHistroryItem(util.GET_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
+    coremodule.history.push(createHistroryItem(util.GET_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
     let cb_getcard = function(index,context){
@@ -110,7 +113,7 @@ module.exports = {
 
     let cardIndex = msg.cardIndex;
     let cardContext = msg.cardContext
-    history.push(createHistroryItem(util.DROP_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
+    coremodule.history.push(createHistroryItem(util.DROP_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
     coremodule.ontable.questioncard ={
@@ -135,7 +138,7 @@ module.exports = {
     }
 
     let cardIndex = coremodule.textcard.splice(0,1);
-    history.push(createHistroryItem(util.GET_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
+    coremodule.history.push(createHistroryItem(util.GET_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
     let cb_getcard = function(index,context){
@@ -143,7 +146,7 @@ module.exports = {
       cb(context);
     }
 
-    console.log("random_index: "+ (cardIndex));
+    console.log("random_index: "+ cardIndex);
     cardmodule.getCard(util.TEXT_CARD_TABLE,cardIndex,cb_getcard);
   },
 
@@ -155,7 +158,7 @@ module.exports = {
 
     let cardIndex = msg.cardIndex;
     let cardContext = msg.cardContext;
-    history.push(createHistroryItem(util.DROP_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
+    coremodule.history.push(createHistroryItem(util.DROP_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
     coremodule.ontable.textcard.push({
@@ -168,7 +171,7 @@ module.exports = {
   },
 
   chooseLoser: function(coremodule,msg,cb){
-    history.push(
+    coremodule.history.push(
       createHistroryItem(
         util.CHOOSELOSER_EVENT,
         msg.playerid,
