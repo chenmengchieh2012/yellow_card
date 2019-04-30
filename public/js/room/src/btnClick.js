@@ -1,27 +1,35 @@
 var btnClick = function(func){
-	if(func === 'leaveGame')
-		socket.emit(func, "player state");
-	socket.emit(func, $('#msg').val());
+	if(func === 'chatMsg'){
+		MsgBlock_Factory({
+			avatarIndex: localData.playerAvatar,
+			msg: $('#msg-input').val(),
+			playerName: localData.playerName
+		}, 'transmitted');
+		// socket.emit(func, $('#msg-input').val());
+		$('#msg-input').val('');
+	}else{
+		// socket.emit(func, "player state"); // leave or start game
+	}
 }
 
 document.onkeydown = function(event){
 	if(event.keyCode === 13){	//enter
 		event.preventDefault();
-		socket.emit('chatMsg', $('#msg').val());
+		MsgBlock_Factory({
+			avatarIndex: localData.playerAvatar,
+			msg: $('#msg-input').val(),
+			playerName: localData.playerName
+		}, 'transmitted');
+		// socket.emit('chatMsg', $('#msg-input').val());
+		$('#msg-input').val('');
 	}
 }
 
-var roomTag_copy = function(){
-	let btn = document.getElementById("roomTag");
-	let txt = document.createElement("textarea");
-	let roomtag = roomTag();
-	txt.value = roomtag;
-	document.body.appendChild(txt);
-	txt.select();
-	document.execCommand('copy');
-	btn.setAttribute('data-tooltip', "已複製至剪貼簿: " + roomtag);
+var roomTag_copy = function(id){
+	let snackbar = document.getElementById("snackbar");
+	copyFunc(id, roomTag());
+	snackbar.setAttribute('class', "ts active snackbar");
 	setTimeout(function() {
-		btn.removeAttribute('data-tooltip');
-		document.body.removeChild(txt);
-	}, 1000);
+		snackbar.setAttribute('class', "ts snackbar");
+	}, 3000);
 }

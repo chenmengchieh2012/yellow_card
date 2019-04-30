@@ -11,3 +11,10 @@
 	height: 36px;
 	border-radius: 50%;
 }
+
+#player-list-avatar {
+	vertical-align: middle;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+}

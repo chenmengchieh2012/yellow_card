@@ -16,13 +16,20 @@
 	</script>
 
 	<!-- load javascript file -->
+	<script src="js/room/src/onload.js"></script>
+
+	<script src="js/room/src/socketio.js"></script>
+
 	<script src="js/room/src/playerState.js"></script>
 	<script src="js/room/src/startFunc.js"></script>
 	<script src="js/room/src/leaveFunc.js"></script>
 	<script src="js/room/src/chat.js"></script>
 	<script src="js/room/src/btnClick.js"></script>
-	<script src="js/room/src/socketio.js"></script>
-	<script src="js/room/src/onload.js"></script>
+	<script src="js/room/src/getCookie.js"></script>
+	<script src="js/room/src/copyFunc.js"></script>
+	<script src="js/room/src/timecode.js"></script>
+
+	<script src="js/room/src/testChat.js"></script>
 	<!-- jQuery -->
 	<script
 	  src="https://code.jquery.com/jquery-3.4.0.min.js"
@@ -47,10 +54,61 @@
 		</div>
 		<br/>
 	</div>
-	<div id="right-side"></div>
+	<div id="right-side">
+		<div class="ts grid"></div>
+	</div>
 	<div id="left-side">
-		<div id="player-state-block">
-			
+		<div class="ts grid" id="player-list-block">
+			<div class="two wide column"></div>
+			<div class="twelve wide column">
+				<div class="ts borderless message">
+					<div class="ts grid">
+						<div class="two wide column"></div>
+						<div class="four wide column" style="text-align: center;">
+					        <i class="big user icon"></i>
+					    </div>
+					    <div class="eight wide column" style="text-align: center;">
+						    <h4 id="playerList">玩家列表</h4>
+						</div>
+						<div class="two wide column"></div>
+					</div>
+				</div>
+			</div>
+			<div class="two wide column"></div>
+		</div>
+		<div class="ts grid"  id="player-list-block">
+			<div class="two wide column"></div>
+			<div class="twelve wide column">
+				<div class="ts message">
+					<div class="ts grid">
+						<div class="two wide column"></div>
+						<div class="twelve wide column" id="players">
+							<ul id="list">
+								<li id="playerId">
+									<img src="js/avatar_img/3.png" 
+					        			alt="3" id="player-list-avatar" />
+					        		<div 
+					        			style="text-align: center; width: 80px" 
+					        			id="playerId">
+					        			<p style="color: rgb(1, 178, 104);">我在線中</p>
+					        		</div>
+								</li>
+								<li id="playerId">
+									<img src="js/avatar_img/3.png" 
+					        			alt="3" id="player-list-avatar" />
+					        		<div 
+					        			style="text-align: center; width: 80px" 
+					        			id="playerId">
+					        			<p style="color: rgb(255, 82, 82);">我斷線中</p>
+					        		</div>
+								</li>
+							</ul>
+					    </div>
+						<div class="two wide column"></div>
+					</div>
+				</div>
+			</div>
+			<div class="two wide column"></div>
 		</div>
 	</div>
 	<div id="center">
@@ -71,8 +129,7 @@
 			    <div class="column">
 			    	<div id="room-info-block">
 						<button class="ts right labeled icon mini button" id="roomTag"
-							onclick="roomTag_copy()">
-						    <!-- <i class="clone icon"></i> -->
+							onclick="roomTag_copy('roomTag')">
 						</button>
 					</div>
 			    </div>
@@ -81,38 +138,18 @@
 		<div id="chat">
 			<div id="chat-block">
 				<div class="ts container segment" id="chat-container">
-					<div class="ts grid">
-						<div class="two wide column">
-					        <img src="js/avatar_img/3.png" 
-					        	alt="3" id="playerAvatar" />
-					    </div>
-					    <div class="fourteen wide column">
-						    <div class="ts outlined message"
-						    	style="float: left;" id="msg-box">
-						    	我在剛剛發出了一則垃圾訊息，你...看到了嗎。
-						    </div>
-						</div>
-					</div>
-					<div class="ts grid">
-					    <div class="fourteen wide column">
-						    <div class="ts outlined message"
-						    	style="float: right;" id="msg-box">
-						    	我在剛剛發出了一則垃圾訊息，你...看到了嗎。
-						    </div>
-						</div>
-						<div class="two wide column">
-					        <img src="js/avatar_img/2.png" 
-					        	alt="2" id="playerAvatar" />
-					    </div>
-					</div>
 				</div>
 			</div>
 			<div id="typein-block">
 				<div class="ts form">
 				    <div class="inline field">
-				        <input id="msg" type="text" placeholder="請開始你的幹話..."
-				        	autocomplete="off" />
-				        <button class="ts circular icon button">
+				        <div class="ts circular fluid input">
+				        	<input id="msg-input" type="text" placeholder="請開始你的幹話..."
+					        	autocomplete="off" 
+					        	style="border-width: 2px;" />
+						</div>
+				        <button class="ts circular icon button"
+				        	onclick="btnClick('chatMsg')">
 						    <i class="send icon"></i>
 						</button>
 				    </div>
@@ -129,6 +166,11 @@
 					onclick="return btnClick('leaveGame')">離開遊戲</button>
 			</div>
 		</div>
+	</div>
+	<div class="ts snackbar" id="snackbar">
+	    <div class="content">
+	        <p>房間流水號已複製到剪貼簿。</p>
+	    </div>
 	</div>
 </body>
 </html>

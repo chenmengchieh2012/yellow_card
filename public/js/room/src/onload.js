@@ -1,6 +1,7 @@
+var localData = localStorage.getItem('userData');
+localData = JSON.parse(localData);
+
 $(document).ready(function(){
-  	var localData = localStorage.getItem('userData');
-	localData = JSON.parse(localData);
 	document.getElementById('playerName').innerHTML = "玩家: " + localData.playerName;
 	let btn = document.getElementById('roomTag');
 	let roomtag = roomTag();
