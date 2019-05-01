@@ -2,22 +2,25 @@ var submitFunc = function(self){
 	var data = {
 		playerid: self.msg.playerID,
 		roomid: self.msg.roomID,
-		playername: self.msg.playerName
-		// playeravatar: self.msg.playerAvater
+		playername: self.msg.playerName,
+		playeravatar: self.msg.playerAvater
 	};
 
   $.ajax({
-    url: "/"+self.func,
+    url: "/" + self.func,
     type: 'POST',
     contentType: "application/json",
     data: JSON.stringify({
-      event:'join',
-      hashTag:self.msg.roomTag,
-      msg:data
+      event: 'join',
+      hashTag: self.msg.roomTag,
+      msg: data
     }),
     success: function(result){
-     console.log("result");
+     // $("body").html(result);
+     document.open();
+     document.write(result);
+     document.close();
     }
   });
-
+  return true;
 }

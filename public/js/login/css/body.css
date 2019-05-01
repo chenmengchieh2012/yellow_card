@@ -1,0 +1,81 @@
+:root {
+	--center-width: 600px;
+	--left-side-width: 120px;
+	--left-side-hieght: 320px;
+	--right-side-width: var(--left-side-width);
+	--right-side-hieght: var(--left-side-hieght);
+	--footer-hieght: 80px;
+	--form-width: 400px;
+	--btn-hieght: 200px;
+	--btn-block-width: 350px;
+	--btn-block-hieght: 40px;
+	--left-btn-width: 320px;
+	--right-btn-width: var(--left-btn-width);
+}
+
+#center {
+  	margin: auto;
+  	width: var(--center-width);
+}
+
+#header {
+	text-align: center;
+}
+
+#left-side {
+	text-align: center;
+	float: left;
+	width: var(--left-side-width);
+	height: var(--left-side-hieght);
+}
+
+#right-side {
+	text-align: center;
+	float: right;
+	width: var(--right-side-width);
+	height: var(--right-side-hieght);
+}
+
+#footer {
+	text-align: center;
+	height: var(--footer-hieght);
+	float: bottom;
+	clear: both;
+}
+
+#avatar {
+	text-align: center;
+	float: left;
+	width: auto;
+}
+
+#avatar_block {
+	width: auto;
+	display: inline-block;
+}
+
+#form {
+	float: right;
+	width: var(--form-width);
+}
+
+#btn {
+	text-align: center;
+	clear:both;
+	width: auto;
+	height: var(--btn-hieght);
+}
+
+#btn_block {
+	width: var(--btn-block-width);
+	height: var(--btn-block-hieght);
+	display: inline-block;
+}
+
+#left-btn {
+	width: var(--left-btn-width);
+}
+
+#right-btn {
+	width: var(--right-btn-width);
+}

@@ -1,0 +1,20 @@
+#playerAvatar {
+	vertical-align: middle;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+}
+
+#selfAvatar {
+	vertical-align: middle;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+}
+
+#player-list-avatar {
+	vertical-align: middle;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+}

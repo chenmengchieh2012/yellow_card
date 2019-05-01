@@ -26,8 +26,7 @@ if (cluster.isMaster) {
   app.get('/room', function (req, res) {
     res.status(200)
     res.setHeader('Content-Type', 'text/html');
-    res.send("<h5> room </h5>");
-    
+    res.sendFile(__dirname + "/public/js/room/room.html");
   });
 
   app.post('/createroom', function (req, res) {

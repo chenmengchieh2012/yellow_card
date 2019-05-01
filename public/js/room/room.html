@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>黃牌桌遊 Online</title>
+	<!-- Tocas UI：CSS 與元件 -->
+	<link rel="stylesheet" 
+		href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
+	<!-- Tocas JS：模塊與 JavaScript 函式 -->
+	<script 
+		src="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.js">
+	</script>
+
+	<!-- load socket.io -->
+	<script 
+		src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js">
+	</script>
+
+	<!-- load javascript file -->
+	<script src="js/room/src/onload.js"></script>
+
+	<script src="js/room/src/socketio.js"></script>
+
+	<script src="js/room/src/observer.js"></script>
+	<script src="js/room/src/playerState.js"></script>
+	<script src="js/room/src/startFunc.js"></script>
+	<script src="js/room/src/leaveFunc.js"></script>
+	<script src="js/room/src/chat.js"></script>
+	<script src="js/room/src/btnClick.js"></script>
+	<script src="js/room/src/getCookie.js"></script>
+	<script src="js/room/src/copyFunc.js"></script>
+	<script src="js/room/src/timecode.js"></script>
+
+	<script src="js/room/src/testChat.js"></script>
+	<script src="js/room/src/testState.js"></script>
+	<!-- jQuery -->
+	<script
+	  src="https://code.jquery.com/jquery-3.4.0.min.js"
+	  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+	  crossorigin="anonymous"></script>
+	<!-- load css file -->
+	<link rel="stylesheet" type="text/css" href="js/room/css/avatar.css">
+	<link rel="stylesheet" type="text/css" href="js/room/css/body.css">
+</head>
+<body>
+	<div id="header">
+		<div class="ts massive heading fluid center aligned slate">
+		    <div class="image">
+		        <img src="js/login/icons/bg_title.jpg">
+		    </div>
+		    <span class="header" style="color:black;">
+		    	黃牌桌遊 Online
+		    </span>
+		    <span class="description" style="color:black;">
+		    	線上與好友一同遊玩黃牌。
+		    </span>
+		</div>
+		<br/>
+	</div>
+	<div id="right-side">
+		<div class="ts grid"></div>
+	</div>
+	<div id="left-side">
+		<div class="ts grid" id="player-list-block">
+			<div class="two wide column"></div>
+			<div class="twelve wide column">
+				<div class="ts borderless message">
+					<div class="ts grid">
+						<div class="two wide column"></div>
+						<div class="four wide column" style="text-align: center;">
+					        <i class="big user icon"></i>
+					    </div>
+					    <div class="eight wide column" style="text-align: center;">
+						    <h4 id="playerList">玩家列表</h4>
+						</div>
+						<div class="two wide column"></div>
+					</div>
+				</div>
+			</div>
+			<div class="two wide column"></div>
+		</div>
+		<div class="ts grid"  id="player-list-block">
+			<div class="two wide column"></div>
+			<div class="twelve wide column">
+				<div class="ts message">
+					<div class="ts grid">
+						<div class="two wide column"></div>
+						<div class="twelve wide column" id="players">
+							<ul id="list">
+								<!-- <li id="playerId">
+									<img src="js/avatar_img/3.png" 
+					        			alt="3" id="player-list-avatar" />
+					        		<div 
+					        			style="text-align: center; width: 80px" 
+					        			id="playerId">
+					        			<p style="color: rgb(1, 178, 104);">我在線中</p>
+					        		</div>
+								</li>
+								<li id="playerId">
+									<img src="js/avatar_img/3.png" 
+					        			alt="3" id="player-list-avatar" />
+					        		<div 
+					        			style="text-align: center; width: 80px" 
+					        			id="playerId">
+					        			<p style="color: rgb(255, 82, 82);">我斷線中</p>
+					        		</div>
+								</li> -->
+							</ul>
+					    </div>
+						<div class="two wide column"></div>
+					</div>
+				</div>
+			</div>
+			<div class="two wide column"></div>
+		</div>
+	</div>
+	<div id="center">
+		<div id="player-room-info-block">
+			<div class="ts three column very narrow container grid">
+    			<div class="column">
+    				<div class="ts grid">
+						<div class="four wide column">
+					        <img src="js/avatar_img/3.png" 
+					        	alt="3" id="selfAvatar" />
+					    </div>
+					    <div class="twelve wide column">
+						    <h3 id="playerName">玩家名字</h3>
+						</div>
+					</div>
+    			</div>
+    			<div class="column"></div>
+			    <div class="column">
+			    	<div id="room-info-block">
+						<button class="ts right labeled icon mini button" id="roomTag"
+							onclick="roomTag_copy('roomTag')">
+						</button>
+					</div>
+			    </div>
+			</div>
+		</div>
+		<div id="chat">
+			<div id="chat-block">
+				<div class="ts container segment" id="chat-container">
+				</div>
+			</div>
+			<div id="typein-block">
+				<div class="ts form">
+				    <div class="inline field">
+				        <div class="ts circular fluid input">
+				        	<input id="msg-input" type="text" placeholder="請開始你的幹話..."
+					        	autocomplete="off" 
+					        	style="border-width: 2px;" />
+						</div>
+				        <button class="ts circular icon button"
+				        	onclick="btnClick('chatMsg')">
+						    <i class="send icon"></i>
+						</button>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div id="btn">
+			<div id="left-btn">
+				<button class="ts positive left floated button" type="submit"  
+				onclick="btnClick('startGame')">開始遊戲</button>
+			</div>
+			<div id="right-btn">
+				<button class="ts negative right floated button" type="submit"
+					onclick="btnClick('leaveGame')">離開遊戲</button>
+			</div>
+		</div>
+	</div>
+	<div class="ts snackbar" id="snackbar">
+	    <div class="content">
+	        <p>房間流水號已複製到剪貼簿。</p>
+	    </div>
+	</div>
+</body>
+</html>
