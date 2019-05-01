@@ -2,17 +2,70 @@
 
 # **使用者相關**
 
-1. 登入資訊: 使用者 ID (預設清單 ID、text changed)
-2. 創建房間 -> 生成金鑰 (夾帶在 URL 做加入房間的連結)
-3. 房間退出 (更新玩家狀態 -> 更新房長)
-4. 遊戲開始 (Agent 最久者才有此按鈕)
+1. 登入資訊: 使用者 ID
+2. 創建房間 -> 生成流水號
+3. 房間退出 ( 更新玩家狀態 -> 更新房長 )
+4. 遊戲開始
 5. 聊天室
+
+---
+
+功能:
+
+1. 點擊圖片可更換頭貼
+2. 創建房間不需房間流水號
+3. 加入房間需要流水號 ( 已做防呆 )
 
 ![index](/readme_img/index.png)
 
 ---
 
+功能:
+
+1. 聊天室輸入文字聊天 ( Enter 鍵或發送按鈕 )
+2. 滑鼠移至聊天室內的頭貼可顯示該玩家名稱
+3. 滑鼠點擊聊天內容可顯示訊息時間
+4. 房間流水號可透過複製按鈕複製到剪貼簿
+5. 玩家列表顯示上限與離線 (離線逾 30 秒則刪除該玩家)
+
 ![index](/readme_img/waitingRoom.png)
+
+---
+
+**Socket.io APIs:**
+
+[client] listen on
+
+1. playerState: 
+
+   ```javascript
+   return ({
+   	playerID: playerID,
+   	playerName: playerName,
+   	avatarIndex: avatarIndex,
+   	state: (state = "online" or "offline")
+   });
+   ```
+
+2. startGame:
+
+   ```javascript
+   return ({
+       playground: gameRoom.html
+   });
+   ```
+
+   
+
+3. chatMsg:
+
+   ```javascript
+   return ({
+   	playerIndex: playerIndex,
+       playerName: playerName,
+       msg: msg
+   });
+   ```
 
 ---
 
@@ -20,12 +73,12 @@
 
 - [x] 玩家頭像選擇 (選項清單)
 - [x] 玩家 ID (預設: 時間雜湊)
-- [ ] 玩家列表 (包含狀態)
-- [ ] 聊天收送 (api)
-- [x] 創建遊戲 (api)
-- [x] 加入遊戲 (api)
-- [ ] 退出遊戲 (api)
-- [ ] 遊戲開始 (api)
+- [x] 玩家列表 (包含狀態)
+- [x] 聊天收送
+- [x] 創建遊戲
+- [x] 加入遊戲
+- [ ] 退出遊戲
+- [ ] 遊戲開始
 - [x] (optional: 分享遊戲房間連結的按鈕 (複製 URL))
 
 **APIs:** 

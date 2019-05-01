@@ -1,18 +1,10 @@
-var socket = io();
-socket.on('connection', function(listener){
-	listener.on('chatMsg', function(data){
-		chat(data);
-	});
-	listener.on('playerState', function(state){
-		playerState(state);
-	});
-	listener.on('leaveGame', function(playerInfo){
-		leaveGame(playerInfo);
-	});
-	listener.on('startGame', function(playground){
-		startGame(playground);
-	});
-	listener.on('disconnect', function(playerInfo){
-
-	});
+var socket = io({autoConnect: true});
+socket.on('chatMsg', function(res){
+	chat(res);
+});
+socket.on('playerState', function(state){
+	playerState(state);
+});
+socket.on('startGame', function(playground){
+	startGame(playground);
 });

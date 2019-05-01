@@ -20,6 +20,7 @@
 
 	<script src="js/room/src/socketio.js"></script>
 
+	<script src="js/room/src/observer.js"></script>
 	<script src="js/room/src/playerState.js"></script>
 	<script src="js/room/src/startFunc.js"></script>
 	<script src="js/room/src/leaveFunc.js"></script>
@@ -30,6 +31,7 @@
 	<script src="js/room/src/timecode.js"></script>
 
 	<script src="js/room/src/testChat.js"></script>
+	<script src="js/room/src/testState.js"></script>
 	<!-- jQuery -->
 	<script
 	  src="https://code.jquery.com/jquery-3.4.0.min.js"
@@ -84,7 +86,7 @@
 						<div class="two wide column"></div>
 						<div class="twelve wide column" id="players">
 							<ul id="list">
-								<li id="playerId">
+								<!-- <li id="playerId">
 									<img src="js/avatar_img/3.png" 
 					        			alt="3" id="player-list-avatar" />
 					        		<div 
@@ -101,7 +103,7 @@
 					        			id="playerId">
 					        			<p style="color: rgb(255, 82, 82);">我斷線中</p>
 					        		</div>
-								</li>
+								</li> -->
 							</ul>
 					    </div>
 						<div class="two wide column"></div>
@@ -159,11 +161,11 @@
 		<div id="btn">
 			<div id="left-btn">
 				<button class="ts positive left floated button" type="submit"  
-				onclick="return btnClick('startGame')">開始遊戲</button>
+				onclick="btnClick('startGame')">開始遊戲</button>
 			</div>
 			<div id="right-btn">
 				<button class="ts negative right floated button" type="submit"
-					onclick="return btnClick('leaveGame')">離開遊戲</button>
+					onclick="btnClick('leaveGame')">離開遊戲</button>
 			</div>
 		</div>
 	</div>

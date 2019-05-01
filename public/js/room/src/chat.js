@@ -1,9 +1,11 @@
 var chat = function(res){
-	MsgBlock_Factory({
-		avatarIndex: res.playerAvatar,
-		msg: res.msg,
-		playerName: res.playerName
-	}, "received");
+	if(localData.playerName !== res.playerName){
+		MsgBlock_Factory({
+			avatarIndex: res.avatarIndex,
+			msg: res.msg,
+			playerName: res.playerName
+		}, "received");
+	}
 }
 
 function __resetHTML(){
