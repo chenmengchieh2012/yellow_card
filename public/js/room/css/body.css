@@ -1,0 +1,121 @@
+:root {
+	--center-width: 800px;
+	--left-side-width: 500px;
+	--left-side-hieght: 600px;
+	--player-list-block-width: 450px;
+	--right-side-width: var(--left-side-width);
+	--right-side-hieght: 320px;
+	--player-room-info-block-hieght: 60px;
+	--chat-hieght: 650px;
+	--chat-width: 780px;
+	--player-state-block-hieght: 200px;
+	--chat-block-hieght: 550px;
+	--chat-container-hieght: 530px;
+	--msg-box-width: auto;
+	--footer-hieght: 80px;
+	--form-width: auto;
+	--btn-width: var(--chat-width);
+	--btn-hieght: 80px;
+}
+
+#header {
+	text-align: center;
+}
+
+#center {
+  	margin: auto;
+  	width: var(--center-width);
+}
+
+#left-side {
+	text-align: center;
+	float: left;
+	width: var(--left-side-width);
+	height: var(--left-side-hieght);
+}
+
+#player-list-block {
+	width: var(--player-list-block-width);
+	text-align: center;
+}
+
+#players {
+	float: left;
+}
+
+#right-side {
+	text-align: center;
+	float: right;
+	max-width: var(--right-side-width);
+	height: var(--right-side-hieght);
+	background: red;
+}
+
+#player-room-info-block {
+	height: var(--player-room-info-block-hieght);
+}
+
+#playerName {
+	float: left;
+}
+
+#tagnumber {
+	font-size: 16px;
+}
+
+#chat {
+	height: var(--chat-hieght);
+	width: var(--chat-width);
+}
+
+#chat-block {
+	height: var(--chat-block-hieght);
+}
+
+#chat-container {
+	height: var(--chat-container-hieght);
+	overflow-y: scroll;
+}
+
+#chat-container::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+#chat-container::-webkit-scrollbar {
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+#chat-container::-webkit-scrollbar-thumb {
+	background-color: #000000;
+}
+
+#msg-content {
+	display: flex;
+}
+
+#msg {
+	flex-direction: column;
+	display: flex;
+	max-width: 600px;
+	width: auto;
+}
+
+#form {
+	width: var(--form-width);
+}
+
+#btn {
+	text-align: center;
+	clear:both;
+	width: var(--btn-width);
+	height: var(--btn-hieght);
+}
+
+#footer {
+	text-align: center;
+	height: var(--footer-hieght);
+	float: bottom;
+	clear: both;
+}
