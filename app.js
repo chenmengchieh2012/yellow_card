@@ -22,6 +22,10 @@ if (cluster.isMaster) {
   	res.sendFile('index.html');
   });
 
+  app.get('/test', function(req, res){
+    res.sendFile(path.join(__dirname, '/public/test/test.html'));
+  });
+
 
   app.get('/room', function (req, res) {
     res.status(200)
@@ -31,15 +35,15 @@ if (cluster.isMaster) {
   });
 
   app.post('/createroom', function (req, res) {
+    console.log("createroom");
     console.log(JSON.stringify(req.body));
     let roomTag = req.body.hashTag;
     if(workerHandler.checkExistWorker(roomTag)){
       console.log("return");
       return;
     }
-    workerHandler.addWorker(roomTag);
-
     if(checkexist(req.body)){
+      workerHandler.addWorker(roomTag);
       workerHandler.sendMessagetoWorker(req.body,null);
       res.cookie('roomtag', roomTag);
       res.redirect(302, '/room');
@@ -49,6 +53,7 @@ if (cluster.isMaster) {
   });
 
   app.post('/joinroom', function (req, res) {
+    console.log("joinroom");
     console.log(JSON.stringify(req.body));
     let roomTag = req.body.hashTag;
     if(!workerHandler.checkExistWorker(roomTag)){

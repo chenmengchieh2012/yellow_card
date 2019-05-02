@@ -68,7 +68,10 @@ module.exports = {
         console.log('worker ${worker.process.pid} died');
       });
       worker.on('message', (envelope) => { //worker send message to master
-        console.log("master get: " + envelope);
+        console.log("master get: " + JSON.stringify(envelope));
+
+        
+
 
         if(envelope.req.event == util.SETSOCKET_EVENT){
           serv_io.sockets.connected[envelope.socket_id].emit('response',{
@@ -87,6 +90,16 @@ module.exports = {
           }
         }
 
+        if(envelope.req.event == util.DROP_QUESTIONCARD_EVENT){
+          if(envelope.res.players[k].socket_id != null){
+            serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
+              "evnet":envelope.req.event,
+              "playerid":envelope.req.msg.playerid,
+              "msg":envelope.res.cardContext
+            });
+          }
+        }
+
         if(envelope.req.event == util.GET_TEXTCARD_EVENT){
           for (k in envelope.res.players) {
             console.log(k);
@@ -94,7 +107,7 @@ module.exports = {
               serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
                 "evnet":envelope.req.event,
                 "playerid":envelope.req.msg.playerid,
-                "msg":envelope.res.card_context
+                "msg":envelope.res.cardContext
               });
             }else if(envelope.res.players[k].socket_id != null){
               serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
@@ -125,6 +138,10 @@ function workerprocess(){
     //process.send(msg);
     console.log("worker get:" + JSON.stringify(envelope.req) );
     if(envelope.req.event == util.JOINGAME_EVENT){
+      if(coreModule.players[envelope.req.msg.playerid] != null){
+        console.log("workerprocess return");
+        return;
+      }
       core.joinGame(coreModule,envelope.req.msg);
       console.log("worker join" + JSON.stringify(coreModule) );
     }
@@ -143,9 +160,9 @@ function workerprocess(){
 
     if(envelope.req.event == util.GET_QUESTIONCARD_EVENT){
       console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
-      core.getQuestionCard(coreModule,envelope.req.msg,(card_context) => {
+      core.getQuestionCard(coreModule,envelope.req.msg,(index,context,weights) => {
         envelope.res = {};
-        envelope.res['card_context'] = card_context;
+        envelope.res['cardContext'] = context;
         envelope.res['players'] = coreModule.players;
         process.send(envelope);
       });
@@ -153,9 +170,9 @@ function workerprocess(){
 
     if(envelope.req.event == util.GET_TEXTCARD_EVENT){
       console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
-      core.getTextCard(coreModule,envelope.req.msg,(card_context) => {
+      core.getTextCard(coreModule,envelope.req.msg,(index,context,weights) => {
         envelope.res = {};
-        envelope.res['card_context'] = card_context;
+        envelope.res['cardContext'] = context;
         envelope.res['players'] = coreModule.players;
         process.send(envelope);
       });

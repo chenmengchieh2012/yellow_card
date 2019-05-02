@@ -10,10 +10,6 @@ function createCore(){
     "garbage_textcard":[],
     "questioncard":[],
     "textcard":[],
-    "ontable":{
-      "questioncard":{},
-      "textcard":[]
-    }
   }
 }
 
@@ -96,9 +92,9 @@ module.exports = {
     coremodule.history.push(createHistroryItem(util.GET_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
-    let cb_getcard = function(index,context){
+    let cb_getcard = function(index,context,weights){
       console.log("[core] context:",context);
-      cb(context);
+      cb(index,context,weights);
     }
 
     console.log("cardIndex: "+ (cardIndex));
@@ -115,13 +111,6 @@ module.exports = {
     let cardContext = msg.cardContext
     coremodule.history.push(createHistroryItem(util.DROP_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
-
-    coremodule.ontable.questioncard ={
-      "playerid":msg.playerid,
-      "cardIndex":msg.cardIndex,
-      "cardContext":msg.cardContext
-    };
-
     cb(msg);
   },
 
@@ -141,9 +130,9 @@ module.exports = {
     coremodule.history.push(createHistroryItem(util.GET_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
 
-    let cb_getcard = function(index,context){
+    let cb_getcard = function(index,context,weights){
       console.log("[core] context:",context);
-      cb(context);
+      cb(index,context,weights);
     }
 
     console.log("random_index: "+ cardIndex);
@@ -160,13 +149,6 @@ module.exports = {
     let cardContext = msg.cardContext;
     coremodule.history.push(createHistroryItem(util.DROP_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
     console.log("coremodule: "+ JSON.stringify(coremodule));
-
-    coremodule.ontable.textcard.push({
-      "playerid":msg.playerid,
-      "cardIndex":msg.cardIndex,
-      "cardContext":msg.cardContext
-    });
-
     cb(msg);
   },
 
@@ -179,8 +161,6 @@ module.exports = {
         {"loserid":msg.loserid,"completeText":msg.completeText}
       )
     );
-    coremodule.ontable.textcard = [];
-    coremodule.ontable.questioncard = {};
     cb(msg);
   }
 

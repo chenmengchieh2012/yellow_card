@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FuckyouHJ</title>
+  <!-- Tocas UI：CSS 與元件 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
+  <!-- Tocas JS：模塊與 JavaScript 函式 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
+ 
+
+</head>
+<body>
+  <h5> slowly monkey </h5>
+  <div id="playerid"></div>
+
+  <div class="ts grid">
+      <div class="row">
+          <div class="four wide column">
+            <button class="ts primary button" id="btn_createroom">createroom</button>
+          </div>
+          
+          <div class="four wide column">
+            <button class="ts primary button" id="btn_joinroom">joinroom</button>
+          </div>          
+      </div>
+  </div>
+  <ul id="message"></ul>
+  
+  <script>
+  const addMessageElement = (el, options) => {
+    var $el = $(el);
+    $messages = $("#message");
+    $messages.append($el);
+  }
+  const log = (message) => {
+    var $el = $('<li>').text(message);
+    addMessageElement($el);
+  }
+  var socket = io();
+  socket.on('response', (data) => {
+    console.log("-----------------");
+    log(JSON.stringify(data));
+  });
+
+  socket.on('connect', (data) => {
+    console.log("-----------------");
+    log("connection~~");
+  });
+
+  $(document).ready(function(){
+    let r = Math.random().toString(36).substring(7);
+    
+    $("#playerid").html(r);
+    $("#btn_createroom").click(function(){
+      $.ajax({
+        type: "POST",
+        url: "/createroom",
+        contentType: 'application/json',
+        data:JSON.stringify({
+          event: "join",
+          hashTag: "testhashtag",
+          msg:{
+            playerid: r
+          }
+        }),
+        success: function(data){
+          alert("Data: " + data);   
+          socket.emit('client_message', {event: "setsocket",hashTag:"testhashtag",msg:{playerid:r}});       
+        }
+      });
+      
+
+
+    });
+
+    $("#btn_joinroom").click(function(){
+      $.ajax({
+        type: "POST",
+        url: "/joinroom",
+        contentType: 'application/json',
+        data:JSON.stringify({
+          event: "join",
+          hashTag: "testhashtag",
+          msg:{
+            playerid: r
+          }
+        }),
+        success: function(data){
+          alert("Data: " + data); 
+          socket.emit('client_message', {event: "setsocket",hashTag:"testhashtag",msg:{playerid:r}});       
+        }
+      });
+    });
+
+  });
+  </script>
+</body>
+</html>
