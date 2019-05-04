@@ -110,7 +110,8 @@ if (cluster.isMaster) {
         return;
       }
       res.cookie('roomtag', req.baseUrl + roomTag);
-      res.redirect(302, req.baseUrl + '/room');
+      res.writeHead(302, {Location:req.baseUrl +config.env.prefix+ '/room'});
+      res.end()
     }else{
       res.sendStatus(400);
     }
