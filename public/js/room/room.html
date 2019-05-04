@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>黃牌桌遊 Online</title>
+	<meta charset="UTF-8">
 	<!-- Tocas UI：CSS 與元件 -->
 	<link rel="stylesheet" 
 		href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
@@ -14,7 +15,11 @@
 	<script 
 		src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js">
 	</script>
-
+	<script
+	  src="https://code.jquery.com/jquery-3.4.0.min.js"
+	  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+	  crossorigin="anonymous">
+	</script>
 	<!-- load javascript file -->
 	<script src="js/room/src/onload.js"></script>
 
@@ -33,10 +38,7 @@
 	<script src="js/room/src/testChat.js"></script>
 	<script src="js/room/src/testState.js"></script>
 	<!-- jQuery -->
-	<script
-	  src="https://code.jquery.com/jquery-3.4.0.min.js"
-	  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
-	  crossorigin="anonymous"></script>
+	
 	<!-- load css file -->
 	<link rel="stylesheet" type="text/css" href="js/room/css/avatar.css">
 	<link rel="stylesheet" type="text/css" href="js/room/css/body.css">
@@ -123,7 +125,7 @@
 					        	alt="3" id="selfAvatar" />
 					    </div>
 					    <div class="twelve wide column">
-						    <h3 id="playerName">玩家名字</h3>
+						    <h4 id="playerName">玩家名字</h4>
 						</div>
 					</div>
     			</div>
