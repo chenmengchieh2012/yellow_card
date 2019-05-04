@@ -19,6 +19,7 @@ module.exports = Object.freeze({
 
   QUESTION_CARD_TABLE: "QUESTIONCARD",
   TEXT_CARD_TABLE: "TEXTCARE",
+  TEST:"test",
   getRandomInt: function (max) {
     return Math.floor(Math.random() * Math.floor(max));
   }
