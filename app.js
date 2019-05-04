@@ -51,7 +51,7 @@ if (cluster.isMaster) {
   //====================================
   const routerForTest = express.Router();
 
-  routerForTest.get('/test', function(req, res){
+  routerForTest.get('/', function(req, res){
     res.sendFile(path.join(__dirname, '/public/test/test.html'));
     res.status(200);
   });
