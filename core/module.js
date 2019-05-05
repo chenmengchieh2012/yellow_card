@@ -22,12 +22,12 @@ module.exports = {
       db.run("CREATE TABLE IF NOT EXISTS "+ QUESTION_CARD_TABLE +"( \
         _id INTEGER PRIMARY KEY AUTOINCREMENT, \
         cardcontext TEXT NOT NULL, \
-        weights INTEGER NOT NULL \
+        weights INTEGER \
         )");
       db.run("CREATE TABLE IF NOT EXISTS  "+ TEXTN_CARD_TABLE +"( \
         _id INTEGER PRIMARY KEY   AUTOINCREMENT, \
         cardcontext TEXT NOT NULL, \
-        weights INTEGER NOT NULL \
+        weights INTEGER \
         )");
 
     });

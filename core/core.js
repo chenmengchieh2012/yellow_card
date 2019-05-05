@@ -4,7 +4,7 @@ var cardmodule = require('./module.js')
 
 function createCore(){
   return {
-    "players":{},
+    "players":{}, //becareful of modify this value , using in KEY
     "history":[],
     "garbage_questioncard":[],
     "garbage_textcard":[],

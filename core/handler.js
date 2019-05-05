@@ -1,6 +1,7 @@
 const cluster = require('cluster');
 var io = require('socket.io');
 var core = require('./core.js');
+var _state = require('./state.js');
 var util = require('../util.js')
 var workers = {};
 var serv_io;
@@ -75,28 +76,38 @@ module.exports = {
 
         if(envelope.req.event == util.SETSOCKET_EVENT){
           serv_io.sockets.connected[envelope.socket_id].emit('response',{
-            "evnet":envelope.req.event,
+            "event":envelope.req.event,
             "msg":envelope.res.socket_id
           });
         }
 
         if(envelope.req.event == util.GET_QUESTIONCARD_EVENT){
-          if(envelope.res.players[k].socket_id != null){
-            serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-              "evnet":envelope.req.event,
-              "playerid":envelope.req.msg.playerid,
-              "msg":null
-            });
+          for (k in envelope.res.players) {
+            if(k == envelope.req.msg.playerid && envelope.res.players[k].socket_id != null){
+              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
+                "event":envelope.req.event,
+                "playerid":envelope.req.msg.playerid,
+                "msg":envelope.res.cardContext
+              });
+            }else if(envelope.res.players[k].socket_id != null){
+              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
+                "event":envelope.req.event,
+                "playerid":envelope.req.msg.playerid,
+                "msg":null
+              });
+            }
           }
         }
 
         if(envelope.req.event == util.DROP_QUESTIONCARD_EVENT){
-          if(envelope.res.players[k].socket_id != null){
-            serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-              "evnet":envelope.req.event,
-              "playerid":envelope.req.msg.playerid,
-              "msg":envelope.res.cardContext
-            });
+          for (k in envelope.res.players) {
+            if(envelope.res.players[k].socket_id != null){
+              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
+                "event":envelope.req.event,
+                "playerid":envelope.req.msg.playerid,
+                "msg":envelope.res.cardContext
+              });
+            }
           }
         }
 
@@ -105,13 +116,13 @@ module.exports = {
             console.log(k);
             if(k == envelope.req.msg.playerid && envelope.res.players[k].socket_id != null){
               serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "evnet":envelope.req.event,
+                "event":envelope.req.event,
                 "playerid":envelope.req.msg.playerid,
                 "msg":envelope.res.cardContext
               });
             }else if(envelope.res.players[k].socket_id != null){
               serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "evnet":envelope.req.event,
+                "event":envelope.req.event,
                 "playerid":envelope.req.msg.playerid,
                 "msg":null
               });
@@ -133,9 +144,13 @@ module.exports = {
 }
 
 function workerprocess(){
-  let coreModule = core.createModule()
+  let coreModule = core.createModule();
+  let stateModule = _state.createModule();
+  let prestate = 0;
   process.on('message', (envelope) => {
     //process.send(msg);
+
+    console.log("permission ---> : " + _state.getEventspermission(stateModule));
     console.log("worker get:" + JSON.stringify(envelope.req) );
     if(envelope.req.event == util.JOINGAME_EVENT){
       if(coreModule.players[envelope.req.msg.playerid] != null){
@@ -144,6 +159,9 @@ function workerprocess(){
       }
       core.joinGame(coreModule,envelope.req.msg);
       console.log("worker join" + JSON.stringify(coreModule) );
+      if(stateModule.state == 1){
+        stateModule.playerNumber += 1;
+      }
     }
 
     //test socketio message: {"event": "setsocket","hashTag": "testhashtag","msg":{"playerid": "WTF"}}
@@ -158,7 +176,9 @@ function workerprocess(){
       }
     }
 
-    if(envelope.req.event == util.GET_QUESTIONCARD_EVENT){
+    if(envelope.req.event == util.GET_QUESTIONCARD_EVENT &&
+      _state.getEventspermission(stateModule) == util.GET_QUESTIONCARD_EVENT &&
+      stateModule.eventsize > 0 ){
       console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
       core.getQuestionCard(coreModule,envelope.req.msg,(index,context,weights) => {
         envelope.res = {};
@@ -166,6 +186,7 @@ function workerprocess(){
         envelope.res['players'] = coreModule.players;
         process.send(envelope);
       });
+      stateModule.eventsize -= 1
     }
 
     if(envelope.req.event == util.GET_TEXTCARD_EVENT){
@@ -177,5 +198,41 @@ function workerprocess(){
         process.send(envelope);
       });
     }
+
+    if(envelope.req.event == util.DROP_AND_SHOW_QUESTIONCARD_EVENT
+      _state.getEventspermission(stateModule) == util.DROP_AND_SHOW_QUESTIONCARD_EVENT &&
+      stateModule.eventsize > 0){
+      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));   
+      stateModule.eventsize -= 1   
+    }
+
+    if(envelope.req.event == util.READY_EVENT){
+      stateModule.readyNumber += 1;
+    }
+    console.log("stateModule.readyNumber ----> : "+stateModule.readyNumber);
+    console.log("stateModule.playerNumber ----> : "+stateModule.playerNumber);
+    console.log("stateModule.state ----> : "+stateModule.state);
+    if(stateModule.playerNumber == stateModule.readyNumber &&
+      stateModule.state == 0){
+      _state.chooseLeader(stateModule,coreModule.players,stateModule.playerNumber,stateModule.round);
+      stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
+    }else if(stateModule.state !=0 && stateModule.eventsize == 0){
+      stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
+    }
+
+    console.log("stateModule.state ----> : "+stateModule.state);
+
+    if(prestate != stateModule.state ){
+      if(_state.STATE[stateModule.state].eventsize != -1){
+        stateModule.eventsize = _state.STATE[stateModule.state].eventsize
+      }else if(_state.STATE[stateModule.state].geteventsize == util.KEY_PLAYERS){
+        stateModule.eventsize = coreModule.players.length;
+      }
+      prestate = ((prestate + 1)%_state.TOTAL_STATE);
+    }
+
+    console.log("stateModule.eventsize ----> : "+stateModule.eventsize);
+    
+
   });
 }

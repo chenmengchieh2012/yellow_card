@@ -24,6 +24,32 @@
           
           <div class="four wide column">
             <button class="ts primary button" id="btn_joinroom">joinroom</button>
+          </div>
+
+          <div class="four wide column">
+            <button class="ts primary button" id="btn_ready">新一回合</button>
+          </div>         
+      </div>
+      <div class="row">
+          <div class="four wide column">
+              <div class="ts selection segmented list" id="list_questioncard">
+                  
+              </div>
+          </div>
+          
+          <div class="four wide column">
+            <button class="ts primary button" id="btn_getquestioncard">取得問題卡片</button>
+          </div>          
+      </div>
+      <div class="row">
+          <div class="four wide column">
+              <div class="ts selection segmented list" id="list_textcard">
+                  
+              </div>
+          </div>
+          
+          <div class="four wide column">
+            <button class="ts primary button" id="btn_gettextcard">取得答案卡片</button>
           </div>          
       </div>
   </div>
@@ -40,9 +66,12 @@
     addMessageElement($el);
   }
   var socket = io();
-  socket.on('response', (data) => {
-    console.log("-----------------");
+  socket.on('response', (data) => {    
     log(JSON.stringify(data));
+    if(data.event == "getquestioncard"){
+      console.log("-----------------");
+      $('#list_questioncard').append("<a href=\"#!\" class=\"item\">"+data.msg+"</a>")
+    }
   });
 
   socket.on('connect', (data) => {
@@ -93,6 +122,21 @@
           socket.emit('client_message', {event: "setsocket",hashTag:"testhashtag",msg:{playerid:r}});       
         }
       });
+    });
+
+    $("#btn_getquestioncard").click(function(){
+      socket.emit('client_message', {event: "getquestioncard",hashTag:"testhashtag",msg:{playerid:r}});
+
+    });
+
+    $("#btn_gettextcard").click(function(){
+      socket.emit('client_message', {event: "gettextcard",hashTag:"testhashtag",msg:{playerid:r}});
+
+    });
+
+    $("#btn_ready").click(function(){
+      socket.emit('client_message', {event: "ready",hashTag:"testhashtag"});
+
     });
 
   });

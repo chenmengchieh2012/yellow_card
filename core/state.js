@@ -2,14 +2,16 @@ var util = require('../util.js')
 
 function createState(){
   return{
-    "playerNumber":0
+    "playerNumber":0,
+    "readyNumber":0,
     "leader":[],
     "members":[],
     "rememberQuestion":[],
     "rememberText":[],
     "eventsize":0,
     "cardsize":0,
-    "state":0
+    "state":0,
+    "round":0,
   }
 }
 
@@ -20,7 +22,7 @@ const STATE = [
     "permission":["leader","members"],
     "event":util.READY_EVENT,
     "eventsize":-1,
-    "geteventsize":util.KEY_PLAYERID,
+    "geteventsize":util.KEY_PLAYERS,
     "cardsize":0
   },
   {
@@ -28,14 +30,14 @@ const STATE = [
     "discribe":"getquestion",
     "permission":['leader'],
     "event":util.GET_QUESTIONCARD_EVENT,
-    "eventsize":1,
+    "eventsize":2,
     "cardsize":2
   },
   {
     "state":3,
     "discribe":"choosequestion",
     "permission":["leader"],
-    "event":util.DROP_QUESTIONCARD_EVENT,
+    "event":util.DROP_AND_SHOW_QUESTIONCARD_EVENT,
     "eventsize":1,
     "cardsize":2
   },
@@ -45,7 +47,7 @@ const STATE = [
     "permission":["members"],
     "event":util.DROP_TEXTCARD_EVENT,
     "eventsize":-1,
-    "geteventsize":util.KEY_PLAYERID,
+    "geteventsize":util.KEY_PLAYERS,
     "cardsize":-1,
     "getcardsize":util.KEY_CARDWEIGHTS
   },
@@ -55,7 +57,7 @@ const STATE = [
     "permission":["leader"],
     "event":util.SHOW_TEXTCARD_EVENT,
     "eventsize":-1,
-    "geteventsize":util.KEY_PLAYERID,
+    "geteventsize":util.KEY_PLAYERS,
     "cardsize":0
   },
   {
@@ -71,41 +73,25 @@ const STATE = [
 
 
 module.exports = {
-  createModule: function(players){
-    let playerNumber = players.length;
+  createModule: function(){    
     let stateModule = createState();
+    return stateModule;
+  },
+  chooseLeader: function(stateModule,players,playerNumber,i){
     stateModule.playerNumber = playerNumber;
-    let leader = players[0];
+    let leader = players[i%players.length];
     for (let player in players) {
-      if(leader < player){
+      if(leader != player){
         stateModule.members.push(leader);
-        leader = player;
-      }else{
-        stateModule.members.push(player);
       }
     }
-  },
-  addStateNumber: function(stateModule){
-    stateModule.state = stateModule.state+1;
   },
   getPlayerspermission: function(stateModule){
     return STATE[stateModule.state].permission;
   },
   getEventspermission: function(stateModule){
     return STATE[stateModule.state].event;
-  },
-  setEventsSize: function(stateModule,eventsize){
-    if(STATE[stateModule.state].eventsize == -1){
-      stateModule.eventsize = eventsize;
-    }else{
-      stateModule.eventsize = TATE[stateModule.state].eventsize;
-    }
-  },
-  setCardSize: function(stateModule,eventsize){
-    if(STATE[stateModule.state].cardsize == -1){
-      stateModule.cardsize = cardsize;
-    }else{
-      stateModule.cardsize = TATE[stateModule.state].cardsize;
-    }
-  }
+  },  
+  STATE,
+  TOTAL_STATE:6
 }
