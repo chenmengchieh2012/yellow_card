@@ -1,5 +1,5 @@
 var util = require('../util.js')
-var cardmodule = require('./module.js')
+var cardModule = require('./module.js')
 
 
 function createCore(){
@@ -32,65 +32,64 @@ function createHistroryItem(event,playerid,cardindex,others){
 
 module.exports = {
   createModule: function(){
-    var coremodule = createCore()
+    var coreModule = createCore()
 
     console.log("[core] init");
     let i;
     for(i=0;i<util.MAX_TEXTCARD;i++){      
-      coremodule.textcard.push(i+1);
+      coreModule.textcard.push(i+1);
     }
 
     for(i=0;i<util.MAX_QUESTIONCARD;i++){
-      coremodule.questioncard.push(i+1);
+      coreModule.questioncard.push(i+1);
     }
-    shuffleArray(coremodule.questioncard);
-    shuffleArray(coremodule.textcard);
-    return coremodule;
+    shuffleArray(coreModule.questioncard);
+    shuffleArray(coreModule.textcard);
+    return coreModule;
   },
 
-  joinGame: function(coremodule,msg) {
+  joinGame: function(coreModule,msg) {
     console.log("[core] join: " + JSON.stringify(msg));
     if(msg.playerid != null){
         let id = msg.playerid
-        coremodule.players[id] = createPlayer();
+        coreModule.players[id] = createPlayer();
     }
-    console.log("coremodule: "+ JSON.stringify(coremodule))
+    
   },
 
-  setSocketid: function(coremodule,msg,socketid) {
+  setSocketid: function(coreModule,msg,socketid) {
     console.log("[core] setSocketid");
     if(msg.playerid != null){
         let id = msg.playerid
-        if(coremodule.players[id] != undefined){
-         coremodule.players[id].socket_id = socketid;
+        if(coreModule.players[id] != undefined){
+         coreModule.players[id].socket_id = socketid;
         }
     }
-    console.log("coremodule: "+ JSON.stringify(coremodule))
   },
 
-  leaveGame: function(coremodule,msg){
+  leaveGame: function(coreModule,msg){
     console.log("[core] leaveGame");
-    let index = coremodule.players.indexOf(msg.playerid) ;
+    let index = coreModule.players.indexOf(msg.playerid) ;
     if(index> -1){
-      coremodule.players.splice(index, 1);
+      coreModule.players.splice(index, 1);
     }
   },
 
-  getQuestionCard: function(coremodule,msg,cb){
-    console.log("[core] getQuestionCard" + JSON.stringify(coremodule));
-    if(!checkMsgInfo(coremodule,msg)){
+  getQuestionCard: function(coreModule,msg,cb){
+    console.log("[core] getQuestionCard");
+    if(!checkMsgInfo(coreModule,msg)){
       return;
     }
 
-    if(coremodule.questioncard.length == 0){
-      coremodule.questioncard = coremodule.garbage_questioncard.slice();
-      coremodule.garbage_questioncard = [];
-      shuffleArray(coremodule.questioncard);
+    if(coreModule.questioncard.length == 0){
+      coreModule.questioncard = coreModule.garbage_questioncard.slice();
+      coreModule.garbage_questioncard = [];
+      shuffleArray(coreModule.questioncard);
     }
 
-    let cardIndex = coremodule.questioncard.splice(0,1);
-    coremodule.history.push(createHistroryItem(util.GET_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
-    console.log("coremodule: "+ JSON.stringify(coremodule));
+    let cardIndex = coreModule.questioncard.splice(0,1);
+    coreModule.history.push(createHistroryItem(util.GET_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
+    
 
     let cb_getcard = function(index,context,weights){
       console.log("[core] context:",context);
@@ -98,62 +97,61 @@ module.exports = {
     }
 
     console.log("cardIndex: "+ (cardIndex));
-    cardmodule.getCard(util.QUESTION_CARD_TABLE,cardIndex,cb_getcard);
+    cardModule.getCard(util.QUESTION_CARD_TABLE,cardIndex,cb_getcard);
   },
 
-  dropQuestionCard: function(coremodule,msg,cb){
-    console.log("[core] dropQuestionCard" + JSON.stringify(coremodule));
-    if(!checkMsgInfo(coremodule,msg)){
-      return;
-    }
-
-    let cardIndex = msg.cardIndex;
-    let cardContext = msg.cardContext
-    coremodule.history.push(createHistroryItem(util.DROP_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
-    console.log("coremodule: "+ JSON.stringify(coremodule));
-    cb(msg);
-  },
-
-  getTextCard: function(coremodule,msg,cb){
-    console.log("[core] getCard" + JSON.stringify(coremodule));
-    if(!checkMsgInfo(coremodule,msg)){
-      return;
-    }
-
-    if(coremodule.textcard.length == 0){
-      coremodule.textcard = coremodule.garbage_textcard.slice();
-      coremodule.garbage_textcard = [];
-      shuffleArray(coremodule.textcard);
-    }
-
-    let cardIndex = coremodule.textcard.splice(0,1);
-    coremodule.history.push(createHistroryItem(util.GET_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
-    console.log("coremodule: "+ JSON.stringify(coremodule));
-
-    let cb_getcard = function(index,context,weights){
-      console.log("[core] context:",context);
-      cb(index,context,weights);
-    }
-
-    console.log("random_index: "+ cardIndex);
-    cardmodule.getCard(util.TEXT_CARD_TABLE,cardIndex,cb_getcard);
-  },
-
-  dropTextCard: function(coremodule,msg,cb){
-    console.log("[core] dropQuestionCard" + JSON.stringify(coremodule));
-    if(!checkMsgInfo(coremodule,msg)){
+  chooseQuestionCard: function(coreModule,msg,cb){
+    console.log("[core] chooseQuestionCard");
+    if(!checkMsgInfo(coreModule,msg)){
       return;
     }
 
     let cardIndex = msg.cardIndex;
     let cardContext = msg.cardContext;
-    coremodule.history.push(createHistroryItem(util.DROP_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
-    console.log("coremodule: "+ JSON.stringify(coremodule));
+    coreModule.history.push(createHistroryItem(util.CHOOSE_QUESTIONCARD_EVENT,msg.playerid,cardIndex,null));
+    
     cb(msg);
   },
 
-  chooseLoser: function(coremodule,msg,cb){
-    coremodule.history.push(
+  getTextCard: function(coreModule,msg,cb){
+    console.log("[core] getCard");
+    if(!checkMsgInfo(coreModule,msg)){
+      return;
+    }
+
+    if(coreModule.textcard.length == 0){
+      coreModule.textcard = coreModule.garbage_textcard.slice();
+      coreModule.garbage_textcard = [];
+      shuffleArray(coreModule.textcard);
+    }
+
+    let cardIndex = coreModule.textcard.splice(0,1);
+    coreModule.history.push(createHistroryItem(util.GET_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
+
+    let cb_getcard = function(index,context,weights){
+      console.log("[core] cb_getcard:",context);
+      cb(index,context,weights);
+    }
+
+    console.log("random_index: "+ cardIndex);
+    cardModule.getCard(util.TEXT_CARD_TABLE,cardIndex,cb_getcard);
+  },
+
+  chooseTextCard: function(coreModule,msg,cb){
+    console.log("[core] chooseTextCard");
+    if(!checkMsgInfo(coreModule,msg)){
+      return;
+    }
+
+    let cardIndex = msg.cardIndex;
+    let cardContext = msg.cardContext;
+    coreModule.history.push(createHistroryItem(util.CHOOSE_TEXTCARD_EVENT,msg.playerid,cardIndex,null));
+    
+    cb(msg);
+  },
+
+  chooseLoser: function(coreModule,msg,cb){
+    coreModule.history.push(
       createHistroryItem(
         util.CHOOSELOSER_EVENT,
         msg.playerid,

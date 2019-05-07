@@ -8,8 +8,8 @@ function createState(){
     "members":[],
     "rememberQuestion":[],
     "rememberText":[],
+    "rememberPlayers":[],
     "eventsize":0,
-    "cardsize":0,
     "state":0,
     "round":0,
   }
@@ -23,7 +23,6 @@ const STATE = [
     "event":util.READY_EVENT,
     "eventsize":-1,
     "geteventsize":util.KEY_PLAYERS,
-    "cardsize":0
   },
   {
     "state":2,
@@ -31,25 +30,21 @@ const STATE = [
     "permission":['leader'],
     "event":util.GET_QUESTIONCARD_EVENT,
     "eventsize":2,
-    "cardsize":2
   },
   {
     "state":3,
     "discribe":"choosequestion",
     "permission":["leader"],
-    "event":util.DROP_AND_SHOW_QUESTIONCARD_EVENT,
+    "event":util.CHOOSE_QUESTIONCARD_EVENT,
     "eventsize":1,
-    "cardsize":2
   },
   {
     "state":4,
     "discribe":"choosetext",
     "permission":["members"],
-    "event":util.DROP_TEXTCARD_EVENT,
+    "event":util.CHOOSE_TEXTCARD_EVENT,
     "eventsize":-1,
     "geteventsize":util.KEY_PLAYERS,
-    "cardsize":-1,
-    "getcardsize":util.KEY_CARDWEIGHTS
   },
   {
     "state":5,
@@ -58,7 +53,6 @@ const STATE = [
     "event":util.SHOW_TEXTCARD_EVENT,
     "eventsize":-1,
     "geteventsize":util.KEY_PLAYERS,
-    "cardsize":0
   },
   {
     "state":6,
@@ -66,7 +60,6 @@ const STATE = [
     "permission":["leader"],
     "event":util.CHOOSELOSER_EVENT,
     "eventsize":1,
-    "cardsize":0
   },
 
 ]
@@ -78,13 +71,19 @@ module.exports = {
     return stateModule;
   },
   chooseLeader: function(stateModule,players,playerNumber,i){
+
     stateModule.playerNumber = playerNumber;
-    let leader = players[i%players.length];
+    let leaderindex = i%playerNumber;
+    let = i;
     for (let player in players) {
-      if(leader != player){
-        stateModule.members.push(leader);
+      if(i == leaderindex){
+        stateModule.leader.push(player);
+      }else{
+        stateModule.members.push(player);
       }
+      i += 1;
     }
+    
   },
   getPlayerspermission: function(stateModule){
     return STATE[stateModule.state].permission;

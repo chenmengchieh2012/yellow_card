@@ -50,6 +50,9 @@
           
           <div class="four wide column">
             <button class="ts primary button" id="btn_gettextcard">取得答案卡片</button>
+          </div>
+          <div class="four wide column">
+            <button class="ts primary button" id="btn_choosetextcard">送出答案卡片</button>
           </div>          
       </div>
   </div>
@@ -62,17 +65,68 @@
     $messages.append($el);
   }
   const log = (message) => {
-    var $el = $('<li>').text(message);
+    var $el = $('<li>').text(JSON.stringify(message));
     addMessageElement($el);
   }
+
   var socket = io();
+  var textcardNumber = 0;
   socket.on('response', (data) => {    
-    log(JSON.stringify(data));
+    log(data);
     if(data.event == "getquestioncard"){
       console.log("-----------------");
-      $('#list_questioncard').append("<a href=\"#!\" class=\"item\">"+data.msg+"</a>")
+      $('#list_questioncard').append("<a href=\"#!\" class=\"item questioncard\" "+
+          "onclick=\"chooseQuestion(this);\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</a>")
+    }
+
+    if(data.event == "gettextcard"){
+      console.log("-----------------");
+      $('#list_textcard').append("<a href=\"#!\" class=\"item\ textcard\" "+
+          "onclick=\"\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</a>");
+      textcardNumber += 1;
     }
   });
+  
+  function chooseQuestion(obj){
+    console.log($(obj));
+    let cardIndex = $(obj).attr("data-cardIndex");
+    let r = $("#playerid").html();
+    $(".questioncard").hide();
+    $(obj).show();
+    socket.emit('client_message', {
+      event: "choosequestioncard",
+      hashTag:"testhashtag",
+      msg:{
+        playerid:r,
+        cardIndex:cardIndex
+      }
+    }); 
+  }
+
+  function chooseTextcard(){
+    let r = $("#playerid").html();
+    $(".textcard").hide();
+    socket.emit('client_message', {
+      event: "choosetextcard",
+      hashTag:"testhashtag",
+      msg:{
+        playerid:r,
+        cardWeights:2,        
+        cards:[
+          {
+            order:1,
+            cardIndex:1,
+            cardContext:"test1"
+          },
+          {
+            order:2,
+            cardIndex:2,
+            cardContext:"test2"
+          }
+        ]
+      }
+    }); 
+  }
 
   socket.on('connect', (data) => {
     console.log("-----------------");
@@ -81,7 +135,9 @@
 
   $(document).ready(function(){
     let r = Math.random().toString(36).substring(7);
-    
+
+
+
     $("#playerid").html(r);
     $("#btn_createroom").click(function(){
       $.ajax({
@@ -135,8 +191,12 @@
     });
 
     $("#btn_ready").click(function(){
-      socket.emit('client_message', {event: "ready",hashTag:"testhashtag"});
+      socket.emit('client_message', {event: "ready",hashTag:"testhashtag",msg:{playerid:r,textcardNumber:textcardNumber}});
 
+    });
+
+    $("#btn_choosetextcard").click(function(){
+      chooseTextcard();
     });
 
   });

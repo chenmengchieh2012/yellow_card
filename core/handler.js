@@ -17,6 +17,9 @@ function socketioInit(){
     socket.on('client_message', function(data) {
       console.log("[socketioInit] Socketio get:" + JSON.stringify(data) );
       let socket_id = socket.id;
+      if(data.hashTag != undefined && data.hashTag != null){
+        socket.hashTag = data.hashTag;
+      }
       sendMessagetoWorker(data,socket_id);
     });
 
@@ -30,6 +33,18 @@ function socketioInit(){
         "chatMessage":data.chatMessage
       })
     })
+
+    socket.on('disconnect', function () {
+      if(socket.hashTag != null){
+        let socket_id = socket.id;
+        let req = {
+          event: util.LEAVE_EVENT,
+          hashTag: socket.hashTag,
+          msg:{}
+        }
+        sendMessagetoWorker(req,socket_id)
+      }
+    });
 
   });
 }
@@ -69,64 +84,64 @@ module.exports = {
         console.log('worker ${worker.process.pid} died');
       });
       worker.on('message', (envelope) => { //worker send message to master
-        console.log("master get: " + JSON.stringify(envelope));
+        // console.log("master get: " + JSON.stringify(envelope));
 
-        
+        function createResponseCardObj(res,show){
+          return {
+            "event": res.event,
+            "playerid": res.playerid,
+            "cardIndex": ((show) ? res.cardIndex : -1),
+            "msg": ((show) ? res.cardContext : -1) 
+          }
+        }
 
 
-        if(envelope.req.event == util.SETSOCKET_EVENT){
+        if(envelope.res.event == util.SETSOCKET_EVENT){
           serv_io.sockets.connected[envelope.socket_id].emit('response',{
-            "event":envelope.req.event,
-            "msg":envelope.res.socket_id
+            "event":envelope.res.event,
+            "socket_id":envelope.res.socket_id
           });
         }
 
-        if(envelope.req.event == util.GET_QUESTIONCARD_EVENT){
+        if(envelope.res.event == util.GET_QUESTIONCARD_EVENT){
           for (k in envelope.res.players) {
-            if(k == envelope.req.msg.playerid && envelope.res.players[k].socket_id != null){
-              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "event":envelope.req.event,
-                "playerid":envelope.req.msg.playerid,
-                "msg":envelope.res.cardContext
-              });
+            if(k == envelope.res.playerid && envelope.res.players[k].socket_id != null){
+              serv_io.sockets.connected[envelope.res.players[k].socket_id]
+                .emit('response',createResponseCardObj(envelope.res,true));
             }else if(envelope.res.players[k].socket_id != null){
-              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "event":envelope.req.event,
-                "playerid":envelope.req.msg.playerid,
-                "msg":null
-              });
+              serv_io.sockets.connected[envelope.res.players[k].socket_id]
+                .emit('response',createResponseCardObj(envelope.res,false));
             }
           }
         }
 
-        if(envelope.req.event == util.DROP_QUESTIONCARD_EVENT){
+        if(envelope.res.event == util.CHOOSE_QUESTIONCARD_EVENT){
           for (k in envelope.res.players) {
             if(envelope.res.players[k].socket_id != null){
-              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "event":envelope.req.event,
-                "playerid":envelope.req.msg.playerid,
-                "msg":envelope.res.cardContext
-              });
+              serv_io.sockets.connected[envelope.res.players[k].socket_id]
+                .emit('response',createResponseCardObj(envelope.res,true));
             }
           }
         }
 
-        if(envelope.req.event == util.GET_TEXTCARD_EVENT){
+        if(envelope.res.event == util.GET_TEXTCARD_EVENT){
           for (k in envelope.res.players) {
             console.log(k);
-            if(k == envelope.req.msg.playerid && envelope.res.players[k].socket_id != null){
-              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "event":envelope.req.event,
-                "playerid":envelope.req.msg.playerid,
-                "msg":envelope.res.cardContext
-              });
+            if(k == envelope.res.playerid && envelope.res.players[k].socket_id != null){
+              serv_io.sockets.connected[envelope.res.players[k].socket_id]
+                .emit('response',createResponseCardObj(envelope.res,true));
             }else if(envelope.res.players[k].socket_id != null){
-              serv_io.sockets.connected[envelope.res.players[k].socket_id].emit('response',{
-                "event":envelope.req.event,
-                "playerid":envelope.req.msg.playerid,
-                "msg":null
-              });
+              serv_io.sockets.connected[envelope.res.players[k].socket_id]
+                .emit('response',createResponseCardObj(envelope.res,false));
             }
+          }
+        }
+
+        if(envelope.res.event == util.SHOW_TEXTCARD_EVENT){
+          for (k in envelope.res.players) {
+            console.log(k);
+            serv_io.sockets.connected[envelope.res.players[k].socket_id]
+              .emit('response',envelope.res);
           }
         }
                 
@@ -151,88 +166,215 @@ function workerprocess(){
     //process.send(msg);
 
     console.log("permission ---> : " + _state.getEventspermission(stateModule));
-    console.log("worker get:" + JSON.stringify(envelope.req) );
+    console.log("worker get:" + JSON.stringify(envelope, null, 2) );
     if(envelope.req.event == util.JOINGAME_EVENT){
       if(coreModule.players[envelope.req.msg.playerid] != null){
         console.log("workerprocess return");
         return;
       }
       core.joinGame(coreModule,envelope.req.msg);
-      console.log("worker join" + JSON.stringify(coreModule) );
-      if(stateModule.state == 1){
-        stateModule.playerNumber += 1;
-      }
+      console.log("worker join" + JSON.stringify(coreModule) );      
     }
 
     //test socketio message: {"event": "setsocket","hashTag": "testhashtag","msg":{"playerid": "WTF"}}
     if(envelope.req.event == util.SETSOCKET_EVENT){      
-      console.log("[workerprocess] setSocketid: "+envelope.socket_id);
-      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
+      console.log("[workerprocess] "+ util.SETSOCKET_EVENT);
       core.setSocketid(coreModule,envelope.req.msg,envelope.socket_id);
       if(envelope.socket_id != null){
-        envelope.res = {};
-        envelope.res['socket_id'] = envelope.socket_id;
+        envelope.res = {
+          event: util.SETSOCKET_EVENT,
+          playerid: envelope.req.msg.playerid,
+          socket_id: envelope.socket_id
+        };
         process.send(envelope);
+      }
+      if(_state.getEventspermission(stateModule) == util.READY_EVENT){
+        stateModule.playerNumber += 1;
       }
     }
 
-    if(envelope.req.event == util.GET_QUESTIONCARD_EVENT &&
-      _state.getEventspermission(stateModule) == util.GET_QUESTIONCARD_EVENT &&
-      stateModule.eventsize > 0 ){
-      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
+    if(isEventAccessable(envelope, util.GET_QUESTIONCARD_EVENT,stateModule) && 
+        stateModule.eventsize > 0 ){
+      console.log("[workerprocess] "+ util.GET_QUESTIONCARD_EVENT);
       core.getQuestionCard(coreModule,envelope.req.msg,(index,context,weights) => {
-        envelope.res = {};
-        envelope.res['cardContext'] = context;
-        envelope.res['players'] = coreModule.players;
+        
+        stateModule.rememberQuestion.push({'cardIndex':index,'cardContext':context,'weights':weights});
+        
+        envelope.res = {
+          event: util.GET_QUESTIONCARD_EVENT,
+          playerid: envelope.req.msg.playerid,
+          players: coreModule.players,
+          cardIndex: index,
+          cardContext: context          
+        };        
         process.send(envelope);
       });
       stateModule.eventsize -= 1
     }
 
-    if(envelope.req.event == util.GET_TEXTCARD_EVENT){
-      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));
-      core.getTextCard(coreModule,envelope.req.msg,(index,context,weights) => {
-        envelope.res = {};
-        envelope.res['cardContext'] = context;
-        envelope.res['players'] = coreModule.players;
-        process.send(envelope);
+    if(isEventAccessable(envelope, util.CHOOSE_TEXTCARD_EVENT,stateModule) &&
+      !stateModule.rememberPlayers.includes(envelope.req.msg.playerid) &&
+      stateModule.eventsize > 0 ){
+      console.log("[workerprocess]" + util.CHOOSE_TEXTCARD_EVENT);
+
+      // [TODO] drop text card
+      let chooseQuestionWeight = stateModule.rememberQuestion[0].weights;
+      if(chooseQuestionWeight != envelope.req.msg.cardWeights){
+        return;
+      }
+
+      stateModule.rememberText.push({
+        playerid: envelope.req.msg.playerid,
+        cards: envelope.req.cards
       });
+
+      for(let i=0;i< chooseQuestionWeight ; i++){
+        core.chooseTextCard(coreModule,envelope.req.msg.cards[i],() =>{
+          console.log("record chooseTextCard");
+        })
+        core.getTextCard(coreModule,envelope.req.msg,(index,context,weights) => {
+          console.log("give chooseTextCard");
+          envelope.res = {
+            event: util.GET_TEXTCARD_EVENT,
+            playerid: envelope.req.msg.playerid,
+            players: coreModule.players,
+            cardIndex: index,
+            cardContext: context          
+          };
+          process.send(envelope);
+        });
+      }
+      stateModule.rememberPlayers.push(envelope.req.msg.playerid);
     }
 
-    if(envelope.req.event == util.DROP_AND_SHOW_QUESTIONCARD_EVENT
-      _state.getEventspermission(stateModule) == util.DROP_AND_SHOW_QUESTIONCARD_EVENT &&
-      stateModule.eventsize > 0){
-      console.log("[workerprocess] req: " + JSON.stringify(envelope.req));   
-      stateModule.eventsize -= 1   
+    if(isEventAccessable(envelope, util.CHOOSE_QUESTIONCARD_EVENT,stateModule) && 
+        stateModule.eventsize > 0){
+        console.log("[workerprocess]" + util.CHOOSE_QUESTIONCARD_EVENT);
+        //clone the choose card for remeberQuestion to extract chosed card
+        let tmpCard;
+        for (let i = 0, len = stateModule.rememberQuestion.length; i < len; i++) {
+          if(envelope.req.msg.cardIndex == stateModule.rememberQuestion[i].cardIndex){
+            tmpCard = Object.assign({}, stateModule.rememberQuestion[i]);
+          }
+        }
+        stateModule.rememberQuestion = [];
+        stateModule.rememberQuestion.push(tmpCard); 
+
+        let msg = envelope.req.msg;
+        msg.cardContext = tmpCard.cardContext;
+        core.chooseQuestionCard(coreModule,msg, (msg) => {
+          console.log('retrun' + msg);
+        });
+
+        envelope.res = {
+          event: util.CHOOSE_QUESTIONCARD_EVENT,
+          playerid: envelope.req.msg.playerid,
+          players: coreModule.players,
+          cardIndex: tmpCard.cardIndex,
+          cardContext: tmpCard.cardContext
+        };
+
+        stateModule.eventsize -= 1;
+        process.send(envelope);
     }
 
-    if(envelope.req.event == util.READY_EVENT){
+    if(isEventAccessable(envelope, util.SHOW_TEXTCARD_EVENT,stateModule) && 
+        stateModule.eventsize > 0){
+        console.log("[workerprocess]" + util.SHOW_TEXTCARD_EVENT);
+        
+    }
+
+    if(isEventAccessable(envelope, util.READY_EVENT,stateModule) && 
+          !stateModule.rememberPlayers.includes(envelope.req.msg.playerid)){
+      let userTextcardNumber = envelope.req.msg.textcardNumber;
+      if(userTextcardNumber < util.USER_TEXTCARD){
+        for(let i=0,max=util.USER_TEXTCARD - userTextcardNumber;i<max;i++){
+          core.getTextCard(coreModule, envelope.req.msg, (index,context,weights) => {
+
+            envelope.res = {
+              event: util.GET_TEXTCARD_EVENT,
+              playerid: envelope.req.msg.playerid,
+              players: coreModule.players,
+              cardIndex: index,
+              cardContext: context
+            };
+
+            process.send(envelope);
+          });
+        }        
+      }
+      stateModule.rememberPlayers.push(envelope.req.msg.playerid);
       stateModule.readyNumber += 1;
+
     }
+
+    if(envelope.req.event == util.LEAVE_EVENT){
+      for (let player in coreModule.players) {
+        if(coreModule.players[player].socket_id == envelope.socket_id){
+          delete coreModule.players[player];
+          stateModule.playerNumber -= 1;
+
+          //[TBD]
+          // 1. change leader
+
+        }
+      }
+    }
+
     console.log("stateModule.readyNumber ----> : "+stateModule.readyNumber);
     console.log("stateModule.playerNumber ----> : "+stateModule.playerNumber);
-    console.log("stateModule.state ----> : "+stateModule.state);
-    if(stateModule.playerNumber == stateModule.readyNumber &&
-      stateModule.state == 0){
-      _state.chooseLeader(stateModule,coreModule.players,stateModule.playerNumber,stateModule.round);
+
+    if(stateModule.playerNumber <= stateModule.readyNumber &&
+      stateModule.state == 0 && 
+      stateModule.playerNumber != 0){
+      _state.chooseLeader(stateModule, coreModule.players, stateModule.playerNumber, stateModule.round);
+
+      //[TBD] chooseLeader and tell the leader he/she is the leader.
+
       stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
+      stateModule.rememberPlayers = [];
+
     }else if(stateModule.state !=0 && stateModule.eventsize == 0){
       stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
+      stateModule.rememberPlayers = [];
+    }else if(stateModule.playerNumber <= stateModule.rememberPlayers.length &&
+      stateModule.state == 3){
+
+      //[TBD] change the ststModule.playerNumber to member's size
+      //[TBD] change the eventNumber into rememberTextcard
+
+      //change to show card
+      stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
+      stateModule.rememberPlayers = [];
+      envelope.res = {
+        event: util.SHOW_TEXTCARD_EVENT,
+        playerid: stateModule.leader,
+        players: coreModule.players,
+      };
+      process.send(envelope);
     }
 
-    console.log("stateModule.state ----> : "+stateModule.state);
+    
 
     if(prestate != stateModule.state ){
       if(_state.STATE[stateModule.state].eventsize != -1){
         stateModule.eventsize = _state.STATE[stateModule.state].eventsize
       }else if(_state.STATE[stateModule.state].geteventsize == util.KEY_PLAYERS){
-        stateModule.eventsize = coreModule.players.length;
+        stateModule.eventsize = stateModule.playerNumber;
       }
       prestate = ((prestate + 1)%_state.TOTAL_STATE);
     }
 
-    console.log("stateModule.eventsize ----> : "+stateModule.eventsize);
     
+    console.log("coremodule: "+ JSON.stringify(coreModule,null,2));
+    console.log("statemodule: "+ JSON.stringify(stateModule,null,2));
+    console.log("stateModule.eventsize ----> : "+stateModule.eventsize);
+    console.log("stateModule.state ----> : "+stateModule.state);
 
   });
+}
+
+function isEventAccessable(envelope,eventName,stateModule){
+  return (envelope.req.event == eventName &&
+      _state.getEventspermission(stateModule) == eventName)
 }
