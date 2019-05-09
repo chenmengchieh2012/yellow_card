@@ -8,9 +8,9 @@ var serv_io;
 function socketioInit(){
   // serv_io.set('log level', 1); // 關閉 debug 訊息
   serv_io.sockets.on('connection', function(socket) {
-    setInterval(function() {
-      socket.emit('date', {'date': new Date()});
-    }, 1000);
+    // setInterval(function() {
+    //   socket.emit('date', {'date': new Date()});
+    // }, 1000);
 
     // 接收來自於瀏覽器的資料
     socket.on('client_message', function(data) {
@@ -28,7 +28,17 @@ function socketioInit(){
         "palyerid":data.playerid,
         "chatMessage":data.chatMessage
       })
-    })
+    });
+
+    socket.on('chatMsg', function(data) {
+      socket.broadcast.to(data.roomtag).emit('chatMsg', data);
+    });
+
+    // setInterval(function() {
+    //   socket.emit('playerState', {
+    //     //player state
+    //   });
+    // }, 1000);
 
   });
 }
