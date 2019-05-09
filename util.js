@@ -10,6 +10,7 @@ module.exports = Object.freeze({
   // DROP_TEXTCARD_EVENT:"droptextcard",
   ROUND_FINISH_EVENT:"roundfinish",
   CHOOSELOSER_EVENT:"chooseloser",
+  CHANGELEADER_EVENT:"changeleader_event",
   SETSOCKET_EVENT:"setsocket",
 
 
@@ -19,6 +20,7 @@ module.exports = Object.freeze({
 
   KEY_PLAYERS:"players", //becareful of modify this value , using in KEY
   KEY_CARDWEIGHTS:"weights", //becareful of modify this value , using in KEY
+  KEY_REMEMBERTEXT:"remembertext",
 
 
   QUESTION_CARD_TABLE: "QUESTIONCARD",

@@ -52,7 +52,7 @@ const STATE = [
     "permission":["leader"],
     "event":util.SHOW_TEXTCARD_EVENT,
     "eventsize":-1,
-    "geteventsize":util.KEY_PLAYERS,
+    "geteventsize":util.KEY_REMEMBERTEXT,
   },
   {
     "state":6,
@@ -76,14 +76,14 @@ module.exports = {
     let leaderindex = i%playerNumber;
     stateModule.leader = [];
     stateModule.members = [];
-    let = i;
+    let j=0;
     for (let player in players) {
-      if(i == leaderindex){
+      if(j == leaderindex){
         stateModule.leader.push(player);
       }else{
         stateModule.members.push(player);
       }
-      i += 1;
+      j += 1;
     }
     
   },
