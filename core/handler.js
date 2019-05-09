@@ -144,6 +144,14 @@ module.exports = {
               .emit('response',envelope.res);
           }
         }
+
+        if(envelope.res.event == util.CHOOSELOSER_EVENT){
+          for (k in envelope.res.players) {
+            console.log(k);
+            serv_io.sockets.connected[envelope.res.players[k].socket_id]
+              .emit('response',envelope.res);
+          }
+        }
                 
       });
 
@@ -217,7 +225,7 @@ function workerprocess(){
       stateModule.eventsize > 0 ){
       console.log("[workerprocess]" + util.CHOOSE_TEXTCARD_EVENT);
 
-      // [TODO] drop text card
+      
       let chooseQuestionWeight = stateModule.rememberQuestion[0].weights;
       if(chooseQuestionWeight != envelope.req.msg.cardWeights){
         return;
@@ -225,13 +233,14 @@ function workerprocess(){
 
       stateModule.rememberText.push({
         playerid: envelope.req.msg.playerid,
-        cards: envelope.req.cards
+        cards: envelope.req.msg.cards
       });
 
       for(let i=0;i< chooseQuestionWeight ; i++){
         core.chooseTextCard(coreModule,envelope.req.msg.cards[i],() =>{
           console.log("record chooseTextCard");
         })
+        coreModule.garbage_textcard.push(envelope.req.msg.cards[i].cardIndex);
         core.getTextCard(coreModule,envelope.req.msg,(index,context,weights) => {
           console.log("give chooseTextCard");
           envelope.res = {
@@ -256,6 +265,7 @@ function workerprocess(){
           if(envelope.req.msg.cardIndex == stateModule.rememberQuestion[i].cardIndex){
             tmpCard = Object.assign({}, stateModule.rememberQuestion[i]);
           }
+          coreModule.garbage_questioncard.push(stateModule.rememberQuestion[i].cardIndex);
         }
         stateModule.rememberQuestion = [];
         stateModule.rememberQuestion.push(tmpCard); 
@@ -281,10 +291,43 @@ function workerprocess(){
     if(isEventAccessable(envelope, util.SHOW_TEXTCARD_EVENT,stateModule) && 
         stateModule.eventsize > 0){
         console.log("[workerprocess]" + util.SHOW_TEXTCARD_EVENT);
+        if(stateModule.eventsize <= stateModule.rememberText.length){
+          let tmpCards = stateModule.rememberText[stateModule.eventsize-1]
+
+          envelope.res = {
+            event: util.SHOW_TEXTCARD_EVENT,
+            playerid: envelope.req.msg.playerid,
+            players: coreModule.players,
+            textcards: tmpCards,
+            questioncards: stateModule.rememberQuestion[0]
+          };
+          process.send(envelope);
+        }
         
+        stateModule.eventsize -= 1;
     }
 
-    if(isEventAccessable(envelope, util.READY_EVENT,stateModule) && 
+    if(isEventAccessable(envelope, util.CHOOSELOSER_EVENT,stateModule) && 
+        stateModule.eventsize > 0){
+        console.log("[workerprocess]" + util.CHOOSELOSER_EVENT);
+        for(let i=0,max=stateModule.rememberText.length;i<max;i++){
+          if(stateModule.rememberText[i].playerid == envelope.req.msg.loser){
+            envelope.res = {
+              event: util.CHOOSELOSER_EVENT,
+              playerid: envelope.req.msg.playerid,
+              players: coreModule.players,
+              loser: envelope.req.msg.playerid,
+              textcards: stateModule.rememberText[i],
+              questioncards: stateModule.rememberQuestion[0]
+            };
+            process.send(envelope);
+          }
+        }
+        stateModule.rememberText = [];
+        stateModule.eventsize -= 1;
+    }
+
+    if(isEventAccessable(envelope, util.READY_EVENT, stateModule) && 
           !stateModule.rememberPlayers.includes(envelope.req.msg.playerid)){
       let userTextcardNumber = envelope.req.msg.textcardNumber;
       if(userTextcardNumber < util.USER_TEXTCARD){
@@ -331,17 +374,20 @@ function workerprocess(){
 
       //[TBD] chooseLeader and tell the leader he/she is the leader.
 
+
       stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
       stateModule.rememberPlayers = [];
 
     }else if(stateModule.state !=0 && stateModule.eventsize == 0){
       stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
       stateModule.rememberPlayers = [];
-    }else if(stateModule.playerNumber <= stateModule.rememberPlayers.length &&
+    }else if(stateModule.members.length <= stateModule.rememberPlayers.length &&
       stateModule.state == 3){
 
-      //[TBD] change the ststModule.playerNumber to member's size
-      //[TBD] change the eventNumber into rememberTextcard
+      //[TBD] (DONE) change the ststModule.playerNumber to member's size
+
+      //[TBD] (DONE) change the eventNumber into rememberTextcard
+      stateModule.eventsize = stateModule.rememberText.length;
 
       //change to show card
       stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
@@ -376,5 +422,21 @@ function workerprocess(){
 
 function isEventAccessable(envelope,eventName,stateModule){
   return (envelope.req.event == eventName &&
-      _state.getEventspermission(stateModule) == eventName)
+      _state.getEventspermission(stateModule) == eventName &&
+      isPersonAccessable(envelope,stateModule)) 
+
+}
+
+function isPersonAccessable(envelope,stateModule){
+  let permission = _state.getPlayerspermission(stateModule);
+  if(permission.length == 2){
+    return true;
+  }
+  for(let i=0,maxi=permission.length;i<maxi;i++){
+    let group = stateModule[permission[i]];
+    if(group.includes(envelope.req.msg.playerid)){
+      return true;
+    }
+  }
+  return false;
 }

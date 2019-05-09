@@ -39,7 +39,7 @@
           
           <div class="four wide column">
             <button class="ts primary button" id="btn_getquestioncard">取得問題卡片</button>
-          </div>          
+          </div>
       </div>
       <div class="row">
           <div class="four wide column">
@@ -49,11 +49,19 @@
           </div>
           
           <div class="four wide column">
-            <button class="ts primary button" id="btn_gettextcard">取得答案卡片</button>
+            <button class="ts primary button" id="btn_showtextcard">看答案卡片</button>
           </div>
           <div class="four wide column">
             <button class="ts primary button" id="btn_choosetextcard">送出答案卡片</button>
           </div>          
+      </div>
+      <div class="row">
+          <div class="four wide column">
+              <div class="ts selection segmented list" id="list_showtextcard">
+                  
+              </div>
+          </div>
+                   
       </div>
   </div>
   <ul id="message"></ul>
@@ -75,15 +83,30 @@
     log(data);
     if(data.event == "getquestioncard"){
       console.log("-----------------");
+      if(data.cardIndex == -1 || data.cardIndex == null || data.cardIndex == undefined){
+        return;
+      }
       $('#list_questioncard').append("<a href=\"#!\" class=\"item questioncard\" "+
           "onclick=\"chooseQuestion(this);\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</a>")
     }
 
     if(data.event == "gettextcard"){
       console.log("-----------------");
+      if(data.cardIndex == -1 || data.cardIndex == null || data.cardIndex == undefined){
+        return;
+      }
       $('#list_textcard').append("<a href=\"#!\" class=\"item\ textcard\" "+
           "onclick=\"\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</a>");
       textcardNumber += 1;
+    }
+
+    if(data.event == "showtextcard"){
+      console.log("-----------------");
+      if(data.textcards == undefined){
+        return;
+      }
+      $('#list_showtextcard').append("<a href=\"#!\" class=\"item\ showtextcard\" "+
+          "onclick=\"chooseLoser(this)\" data-playerid=\""+data.playerid+"\" >"+data.textcards+"</a>");
     }
   });
   
@@ -124,6 +147,20 @@
             cardContext:"test2"
           }
         ]
+      }
+    }); 
+  }
+
+  function chooseLoser(obj){
+    let r = $("#playerid").html();
+    let playerid = $(obj).attr("data-playerid");
+    $(".showtextcard").hide();
+    socket.emit('client_message', {
+      event: "chooseloser",
+      hashTag:"testhashtag",
+      msg:{
+        playerid:r,
+        loser: playerid
       }
     }); 
   }
@@ -185,8 +222,8 @@
 
     });
 
-    $("#btn_gettextcard").click(function(){
-      socket.emit('client_message', {event: "gettextcard",hashTag:"testhashtag",msg:{playerid:r}});
+    $("#btn_showtextcard").click(function(){
+      socket.emit('client_message', {event: "showtextcard",hashTag:"testhashtag",msg:{playerid:r}});
 
     });
 

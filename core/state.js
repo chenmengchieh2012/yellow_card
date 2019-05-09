@@ -74,6 +74,8 @@ module.exports = {
 
     stateModule.playerNumber = playerNumber;
     let leaderindex = i%playerNumber;
+    stateModule.leader = [];
+    stateModule.members = [];
     let = i;
     for (let player in players) {
       if(i == leaderindex){
