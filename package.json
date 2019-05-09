@@ -1,0 +1,30 @@
+{
+  "name": "yellow_card",
+  "version": "1.0.0",
+  "description": "1. 登入資訊: 使用者 ID (預設清單 ID、text changed)\r 2. 創建房間 -> 生成金鑰 (夾帶在 URL 做加入房間的連結)\r 3. 房間退出 (更新玩家狀態 -> 更新房長)\r 4. 遊戲開始 (Agent 最久者才有此按鈕)\r 5. 聊天室",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "js-yaml": "^3.13.1",
+    "socket.io": "^2.2.0",
+    "sqlite3": "^4.0.6",
+    "yargs": "^13.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenmengchieh2012/yellow_card.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chenmengchieh2012/yellow_card/issues"
+  },
+  "homepage": "https://github.com/chenmengchieh2012/yellow_card#readme"
+}

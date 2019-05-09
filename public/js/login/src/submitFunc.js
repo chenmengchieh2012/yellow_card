@@ -1,4 +1,5 @@
 var submitFunc = function(self){
+
 	var data = {
 		playerid: self.msg.playerID,
 		roomid: self.msg.roomID,

@@ -21,11 +21,13 @@ module.exports = {
       //db.run 如果 Staff 資料表不存在，那就建立 Staff 資料表
       db.run("CREATE TABLE IF NOT EXISTS "+ QUESTION_CARD_TABLE +"( \
         _id INTEGER PRIMARY KEY AUTOINCREMENT, \
-        cardcontext TEXT NOT NULL \
+        cardcontext TEXT NOT NULL, \
+        weights INTEGER \
         )");
       db.run("CREATE TABLE IF NOT EXISTS  "+ TEXTN_CARD_TABLE +"( \
         _id INTEGER PRIMARY KEY   AUTOINCREMENT, \
-        cardcontext TEXT NOT NULL \
+        cardcontext TEXT NOT NULL, \
+        weights INTEGER \
         )");
 
     });
@@ -39,11 +41,11 @@ module.exports = {
 
   getCard: function(tablename,index,callback){
     console.log("tablename: "+ tablename + "index: " + index);
-    let sql = 'SELECT _id,cardcontext FROM '+tablename+' WHERE _id = ?';
+    let sql = 'SELECT _id,cardcontext,weights FROM '+tablename+' WHERE _id = ?';
     console.log("sql: "+ sql); 
     this.db.get(sql, index, (err, row) => {
       console.log(row);
-      callback(row._id,row.cardcontext);
+      callback(row._id,row.cardcontext,row.weights);
     });
     
   },
