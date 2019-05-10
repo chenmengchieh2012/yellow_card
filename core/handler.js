@@ -197,7 +197,10 @@ function workerprocess(){
         return;
       }
       core.joinGame(coreModule,envelope.req.msg);
-      console.log("worker join" + JSON.stringify(coreModule) );      
+      console.log("worker join" + JSON.stringify(coreModule) );
+      if(_state.getEventspermission(stateModule) == util.READY_EVENT){
+        stateModule.playerNumber += 1;
+      }     
     }
 
     //test socketio message: {"event": "setsocket","hashTag": "testhashtag","msg":{"playerid": "WTF"}}
@@ -212,9 +215,7 @@ function workerprocess(){
         };
         process.send(envelope);
       }
-      if(_state.getEventspermission(stateModule) == util.READY_EVENT){
-        stateModule.playerNumber += 1;
-      }
+      
     }
 
     if(isEventAccessable(envelope, util.GET_QUESTIONCARD_EVENT,stateModule) && 
