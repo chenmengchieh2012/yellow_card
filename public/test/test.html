@@ -2,67 +2,113 @@
 <html>
 <head>
   <title>FuckyouHJ</title>
+
   <!-- Tocas UI：CSS 與元件 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.css">
   <!-- Tocas JS：模塊與 JavaScript 函式 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tocas-ui/2.3.3/tocas.js"></script>
+
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
- 
+  <!-- core style only -->
+  <link href="https://unpkg.com/nes.css/css/nes-core.min.css" rel="stylesheet" />
+  
+  <style>
+      @font-face {
+        font-family: 'Unifont';
+        src: url('GNUUnifont.ttf') format('truetype');
+        font-weight: normal;
+      }
+      body,button,li { 
+        font-family: Unifont; 
+      }
+  </style>
 
 </head>
-<body>
+<body style="padding-left: 0.5rem;padding-right: 0.5rem;">
+  
   <h5> slowly monkey </h5>
   <div id="playerid"></div>
 
-  <div class="ts grid">
+  
+  <div class="nes-container with-title is-centered" style="margin-top: 2.5rem;">
+    <h3 class="title">遊戲開始區</h3>
+    <div class="ts grid">    
       <div class="row">
-          <div class="four wide column">
-            <button class="ts primary button" id="btn_createroom">createroom</button>
-          </div>
-          
-          <div class="four wide column">
-            <button class="ts primary button" id="btn_joinroom">joinroom</button>
-          </div>
+        <div class="four wide column">
+          <button type="button" class="nes-btn" id="btn_createroom">createroom</button>
+        </div>
+        
+        <div class="four wide column is-centered">
+          <button type="button" class="nes-btn" id="btn_joinroom">joinroom</button>
+        </div>
 
-          <div class="four wide column">
-            <button class="ts primary button" id="btn_ready">新一回合</button>
-          </div>         
+        <div class="four wide column">
+          <button type="button" class="nes-btn" id="btn_ready">新一回合</button>
+        </div>
       </div>
-      <div class="row">
+    </div>                
+  </div>
+
+  <div class="nes-container with-title is-centered" style="margin-top: 2.5rem;">
+    <h3 class="title">問題卡區</h3>
+      <div class="ts grid">
+        <div class="row">
           <div class="four wide column">
-              <div class="ts selection segmented list" id="list_questioncard">
-                  
+              <div class="lists">
+                <ul class="nes-list is-disc" id="list_questioncard">
+                    
+                </ul>
               </div>
           </div>
           
-          <div class="four wide column">
-            <button class="ts primary button" id="btn_getquestioncard">取得問題卡片</button>
+          <div class="four wide column is-centered" style="margin-top: 2.5rem;">
+            <button type="button" class="nes-btn is-primary"id="btn_getquestioncard">取得問題卡片</button>
           </div>
+          <div class="stretched column"></div>
+        </div>
       </div>
+  </div>
+
+  <div class="nes-container with-title is-centered" style="margin-top: 2.5rem;">
+    <h3 class="title">答案卡區</h3>
+    <div class="ts grid">
       <div class="row">
-          <div class="four wide column">
-              <div class="ts selection segmented list" id="list_textcard">
-                  
-              </div>
+    
+        <div class="four wide column">
+          <div class="lists">
+            <ul class="nes-list is-disc" id="list_textcard">
+                
+            </ul>
           </div>
-          
-          <div class="four wide column">
-            <button class="ts primary button" id="btn_showtextcard">看答案卡片</button>
-          </div>
-          <div class="four wide column">
-            <button class="ts primary button" id="btn_choosetextcard">送出答案卡片</button>
-          </div>          
+        </div>
+      
+        <div class="four wide column">
+          <button type="button" class="nes-btn is-primary" id="btn_showtextcard">看答案卡片</button>
+        </div>
+        <div class="four wide column">
+          <button type="button" class="nes-btn is-primary" id="btn_choosetextcard">送出答案卡片</button>
+        </div>
+        <div class="stretched column"></div>
       </div>
+    </div>     
+  </div>
+  <div class="nes-container with-title" style="margin-top: 2.5rem;">
+    <h3 class="title">垃圾區</h3>
+    <div class="ts grid">
       <div class="row">
-          <div class="four wide column">
-              <div class="ts selection segmented list" id="list_showtextcard">
-                  
-              </div>
+        <div class="four wide column">
+          <div class="lists">
+            <ul class="nes-list is-disc" id="list_showtextcard">
+                
+            </ul>
           </div>
-                   
-      </div>
+        </div>
+      </div> 
+      <div class="stretched column"></div>         
+    </div>
   </div>
   <ul id="message"></ul>
   
@@ -86,8 +132,8 @@
       if(data.cardIndex == -1 || data.cardIndex == null || data.cardIndex == undefined){
         return;
       }
-      $('#list_questioncard').append("<a href=\"#!\" class=\"item questioncard\" "+
-          "onclick=\"chooseQuestion(this);\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</a>")
+      $('#list_questioncard').append("<li href=\"#!\" class=\"item questioncard\" "+
+          "onclick=\"chooseQuestion(this);\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</li>")
     }
 
     if(data.event == "gettextcard"){
@@ -95,8 +141,8 @@
       if(data.cardIndex == -1 || data.cardIndex == null || data.cardIndex == undefined){
         return;
       }
-      $('#list_textcard').append("<a href=\"#!\" class=\"item\ textcard\" "+
-          "onclick=\"\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</a>");
+      $('#list_textcard').append("<li href=\"#!\" class=\"item\ textcard\" "+
+          "onclick=\"\" data-cardIndex=\""+data.cardIndex+"\" >"+data.msg+"</li>");
       textcardNumber += 1;
     }
 
@@ -105,8 +151,8 @@
       if(data.textcards == undefined){
         return;
       }
-      $('#list_showtextcard').append("<a href=\"#!\" class=\"item\ showtextcard\" "+
-          "onclick=\"chooseLoser(this)\" data-playerid=\""+data.playerid+"\" >"+data.textcards+"</a>");
+      $('#list_showtextcard').append("<li href=\"#!\" class=\"item\ showtextcard\" "+
+          "onclick=\"chooseLoser(this)\" data-playerid=\""+data.playerid+"\" >"+data.textcards+"</li>");
     }
   });
   
