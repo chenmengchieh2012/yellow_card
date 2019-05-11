@@ -1,5 +1,6 @@
 var chat = function(res){
-	if(localData.playerName !== res.playerName){
+	let data = getCookie();
+	if(data.playerName !== res.playerName){
 		MsgBlock_Factory({
 			avatarIndex: res.avatarIndex,
 			msg: res.msg,

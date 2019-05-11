@@ -1,4 +1,4 @@
-var counter = 1;
+var counter = 2;
 function changeAvatar(){
 	var avatar = document.getElementById("playerAvatar");
 	if(counter === 34)

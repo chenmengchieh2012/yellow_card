@@ -29,10 +29,13 @@ var roomTag_copy = function(id){
 }
 
 var form_msgData = function(){
+	let data = getCookie();
 	let self = {
-		avatarIndex: localData.playerAvatar,
+		avatarIndex: data.playerAvatar,
 		msg: $('#msg-input').val(),
-		playerName: localData.playerName
+		playerName: data.playerName,
+		playerid: data.playerID,
+		roomtag: data.roomTag
 	};
 	return self;
 }

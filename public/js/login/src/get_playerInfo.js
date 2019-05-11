@@ -8,6 +8,14 @@ var timestamp = function(){
 	return Math.floor(Date.now() / 1000);
 }
 
+var setCookie = function(self){
+	document.cookie = "playerName=" + self.playerName;
+	document.cookie = "playerAvatar=" + self.playerAvatar;
+	document.cookie = "playerID=" + self.playerID;
+	document.cookie = "roomTag=" + self.roomTag;
+	document.cookie = "roomID=" + self.roomID;
+}
+
 var get_playerInfo = function(func){
 	let self = {};
 	let T = timestamp();
@@ -29,7 +37,7 @@ var get_playerInfo = function(func){
 
 	console.log(JSON.stringify(self));
 	
-	localStorage.setItem('userData', JSON.stringify(self));
-
+	setCookie(self);
+	
 	return self;
 };

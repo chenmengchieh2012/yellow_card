@@ -17,7 +17,7 @@ var submitFunc = function(self){
       msg: data
     }),
     success: function(result){
-     // $("body").html(result);
+     // $("html").html(result);
      document.open();
      document.write(result);
      document.close();

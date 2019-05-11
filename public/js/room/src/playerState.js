@@ -2,20 +2,27 @@ var observer = Observer();
 
 observer.watcher(30); //30 seconds
 
+var onlineList = [];
+
 var playerState = function(self){
 	console.log(self.playerName + ":" + self.state);
 	let list = observer.getList();
-	let found = false;
+	let found_inOffline = false;
+	let found_inOnline = false;
 	list.forEach(member =>{
 		if(member === self.playerID){
-			found = true;
+			found_inOffline = true;
 		}
 	});
-	console.log(found);
-	let action = (!found && self.state === 'online')? 'append':'change';
+	onlineList.forEach(member =>{
+		if(member === self.playerID){
+			found_inOnline = true;
+		}
+	});
+	let action = (found_inOffline || found_inOnline)? 'change':'append';
 	console.log(action);
-	let playerData = form_playerData(self, action);
-	StateBlock_Manager(playerData);
+	self.action = action;
+	StateBlock_Manager(self);
 }
 
 var form_playerData = function(self, action){
@@ -24,6 +31,8 @@ var form_playerData = function(self, action){
 }
 
 var removeState = function(self){
+	let index = onlineList.indexOf(self.playerID);
+	onlineList.splice(index, 1);
 	observer.unsubscribe(self);
 	let selector = 'li[id=\"' + self.id + '\"]';
 	$(selector).remove();
@@ -31,6 +40,7 @@ var removeState = function(self){
 }
 
 var appendState = function(self){
+	onlineList.push(self.playerID);
 	//one line: rgb(1, 178, 104);
 	//off line: rgb(255, 82, 82);
 	let state_block = "\

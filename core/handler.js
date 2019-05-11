@@ -6,6 +6,19 @@ var util = require('../util.js')
 var workers = {};
 var serv_io;
 
+var PLAYER_LIST = {};
+
+function form_playerObj(state, data){
+  let self = {
+    roomtag: data.roomtag,
+    playerID: data.playerID,
+    playerName: data.playerName,
+    avatarIndex: data.avatarIndex,
+    state: state
+  };
+  return self;
+}
+
 function socketioInit(){
   // serv_io.set('log level', 1); // 關閉 debug 訊息
   serv_io.sockets.on('connection', function(socket) {
@@ -23,27 +36,47 @@ function socketioInit(){
       sendMessagetoWorker(data,socket_id);
     });
 
-    socket.on('join_chat_room', function(data) {
+    //======================================
+    // The first thing when joining room
+    //  is to join in the socket room
+    //    with the toom tag.
+    //======================================
+    socket.on('init_room', function(data) {
+      console.log('init_room with room tag : ' + data.roomtag);
+      console.log('player info: ' + JSON.stringify(data));
       socket.join(data.roomtag);
+      socket.emit('join_room', data);
+
+      console.log("join room")
+      // add new player when socket is connected
+      PLAYER_LIST[socket.id] = form_playerObj("online", data);
+
+      console.log("current players: " + JSON.stringify(PLAYER_LIST));
+      //send states to the client except the sender
+      socket.to(PLAYER_LIST[socket.id].roomtag)
+        .emit('playerState', PLAYER_LIST);
+      //send the states just for the sender
+      socket.emit('playerState', PLAYER_LIST);
     });
 
-    socket.on('read_chat_message',function(data){
-      socket.broadcast.to(data.roomtag).emit({
-        "palyerid":data.playerid,
-        "chatMessage":data.chatMessage
-      })
+    //======================================
+    // start game
+    //======================================
+    socket.on('startGame',function(data){
+    
     });
 
+    //======================================
+    // chating messages
+    //======================================
     socket.on('chatMsg', function(data) {
-      socket.broadcast.to(data.roomtag).emit('chatMsg', data);
+      console.log('chatMsg data: ' + data);
+      socket.to(data.roomtag).emit('chatMsg', data);
     });
 
-    // setInterval(function() {
-    //   socket.emit('playerState', {
-    //     //player state
-    //   });
-    // }, 1000);
-
+    //======================================
+    // player disconnect
+    //=====================================
     socket.on('disconnect', function () {
       if(socket.hashTag != null){
         let socket_id = socket.id;
@@ -53,6 +86,17 @@ function socketioInit(){
           msg:{}
         }
         sendMessagetoWorker(req,socket_id)
+      }
+
+      // delete player when socket is disconnected
+      let playerStateObj = PLAYER_LIST[socket.id];
+      if(playerStateObj != undefined){
+        console.log("disconnect player: " + JSON.stringify(playerStateObj));
+        playerStateObj.state = "offline";
+        socket.to(playerStateObj.roomtag)
+          .emit('playerState', PLAYER_LIST);
+        delete PLAYER_LIST[socket.id];
+        console.log("current players: " + JSON.stringify(PLAYER_LIST));
       }
     });
 

@@ -1,3 +1,0 @@
-var leaveGame = function(socket){
-
-}
