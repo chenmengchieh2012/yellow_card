@@ -1,8 +1,9 @@
-var localData = localStorage.getItem('userData');
-localData = JSON.parse(localData);
-
 $(document).ready(function(){
-	document.getElementById('playerName').innerHTML = "玩家: " + localData.playerName;
+
+	let cookie = getCookie();
+
+	// prepare the player's info and show on to the screen
+	document.getElementById('playerName').innerHTML = "玩家: " + cookie.playerName;
 	let btn = document.getElementById('roomTag');
 	let roomtag = roomTag();
 	let Tag = document.createElement('div');
@@ -14,6 +15,6 @@ $(document).ready(function(){
 	btn.appendChild(icon);
 
 	let avatar = document.getElementById('selfAvatar');
-	avatar.setAttribute('src', "js/avatar_img/" + localData.playerAvatar + ".png");
-	avatar.setAttribute('alt', localData.playerAvatar);
+	avatar.setAttribute('src', "js/avatar_img/" + cookie.playerAvatar + ".png");
+	avatar.setAttribute('alt', cookie.playerAvatar);
 });

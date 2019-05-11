@@ -1,0 +1,23 @@
+
+系統上有 1 個介面: 
+
+    名稱                   : Wi-Fi
+    描述                   : Qualcomm Atheros AR946x Wireless Network Adapter
+    GUID                   : 8969d358-83a5-4a55-b28d-8ad9e94598b2
+    實體位址               : 40:e2:30:b7:3b:9f
+    狀態                   : 連線
+    SSID                   : BUFFALO-C1E3C4
+    BSSID                  : dc:fb:02:c1:e3:c4
+    網路類型               : 基礎結構
+    無線電波類型           : 802.11n
+    驗證                   : 開啟
+    加密方式               : 無
+    連線模式               : 自動連線
+    通道                   : 1
+    接收速率 (Mbps)        : 144.4
+    傳輸速率 (Mbps)        : 144.4
+    訊號                   : 100% 
+    設定檔                 : BUFFALO-C1E3C4 2 
+
+    主控網路狀態  : 無法使用
+

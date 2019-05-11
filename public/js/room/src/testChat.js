@@ -8,10 +8,11 @@ setInterval(function(){
 		chat(res);
 	}, 1000);
 	setTimeout(function() {
+		let data = getCookie();
 		MsgBlock_Factory({
-			avatarIndex: localData.playerAvatar,
+			avatarIndex: data.playerAvatar,
 			msg: '好窩，你好 (｡ŏ_ŏ)',
-			playerName: localData.playerName
+			playerName: data.playerName
 		}, "transmitted");
 	}, 3000);
 	setTimeout(function() {
@@ -23,10 +24,11 @@ setInterval(function(){
 		chat(res);
 	}, 5000);
 	setTimeout(function() {
+		let data = getCookie();
 		MsgBlock_Factory({
-			avatarIndex: localData.playerAvatar,
+			avatarIndex: data.playerAvatar,
 			msg: '傻眼 ="=',
-			playerName: localData.playerName
+			playerName: data.playerName
 		}, "transmitted");
 	}, 7000);
 	setTimeout(function() {

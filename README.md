@@ -91,6 +91,15 @@
 - [ ] 退出遊戲 (使用者資訊)
 - [ ] 遊戲開始
 
+修改部分:
+
+- [ ] RWD: [tutoial](https://pjchender.blogspot.com/2015/05/rwd.html)
+
+使用的資源:
+
+- Tocas UI : 網頁前端模板刻劃工具
+- Node js : 伺服器語言
+
 ## 規則
 
 ---
