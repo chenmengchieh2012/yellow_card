@@ -33,7 +33,7 @@ function socketioInit(){
       if(data.hashTag != undefined && data.hashTag != null){
         socket.hashTag = data.hashTag;
       }
-      sendMessagetoWorker(data,socket_id);
+      sendMessagetoWorker(data, socket.id);
     });
 
     //======================================
@@ -42,28 +42,29 @@ function socketioInit(){
     //    with the toom tag.
     //======================================
     socket.on('init_room', function(data) {
-      console.log('init_room with room tag : ' + data.roomtag);
+      console.log('init_room with room tag : ' + data.hashTag);
       console.log('player info: ' + JSON.stringify(data));
       socket.join(data.roomtag);
-      socket.emit('join_room', data);
-
       console.log("join room")
-      // add new player when socket is connected
-      PLAYER_LIST[socket.id] = form_playerObj("online", data);
 
-      console.log("current players: " + JSON.stringify(PLAYER_LIST));
-      //send states to the client except the sender
-      socket.to(PLAYER_LIST[socket.id].roomtag)
-        .emit('playerState', PLAYER_LIST);
-      //send the states just for the sender
-      socket.emit('playerState', PLAYER_LIST);
+      let req = {
+        event: "newplayer",
+        hashTag: data.hashTag,
+        msg: data.msg
+      }
+      sendMessagetoWorker(req, socket.id);
     });
 
     //======================================
     // start game
     //======================================
     socket.on('startGame',function(data){
-    
+      let req = {
+        event: "ready",
+        hashTag: data.hashTag,
+        msg: data.msg
+      }
+      sendMessagetoWorker(req, socket.id);
     });
 
     //======================================
@@ -85,18 +86,7 @@ function socketioInit(){
           hashTag: socket.hashTag,
           msg:{}
         }
-        sendMessagetoWorker(req,socket_id)
-      }
-
-      // delete player when socket is disconnected
-      let playerStateObj = PLAYER_LIST[socket.id];
-      if(playerStateObj != undefined){
-        console.log("disconnect player: " + JSON.stringify(playerStateObj));
-        playerStateObj.state = "offline";
-        socket.to(playerStateObj.roomtag)
-          .emit('playerState', PLAYER_LIST);
-        delete PLAYER_LIST[socket.id];
-        console.log("current players: " + JSON.stringify(PLAYER_LIST));
+        sendMessagetoWorker(req, socket.id)
       }
     });
 
@@ -148,6 +138,49 @@ module.exports = {
             "msg": ((show) ? res.cardContext : -1) 
           }
         }
+
+        //==========================================================================
+        // socket wants to get the player list from the worker
+        //==========================================================================
+        if(envelope.res.event == "ready"){
+          for(player in envelope.res.readylist){
+            for(playerid in envelope.res.playerlist){
+              if(player.playerID == playerid){
+                serv_io.sockets.connected[playerid.socket_id].emit('ready', 
+                  envelope.res.readylist);
+              }
+            }
+          }
+        }
+
+        if(envelope.res.event == "newplayer"){
+          for(playerid in envelope.res.playerlist){
+            console.log("[newplayer-id] " + playerid);
+            console.log("[newplayer-data] " + 
+              JSON.stringify(envelope.res.playerlist[playerid]));
+            let player = envelope.res.playerlist[playerid];
+            serv_io.sockets.connected[player.socket_id].emit('playerState', {
+              playerlist: envelope.res.playerlist
+            });
+          }
+        }
+
+        if(envelope.res.event == "deleteplayer"){
+          for(playerid in envelope.res.playerlist){
+            console.log("[deleteplayer-id] " + playerid);
+            console.log("[deleteplayer-data] " + 
+              JSON.stringify(envelope.res.playerlist[playerid]));
+            let player = envelope.res.playerlist[playerid];
+            if(player.state != 'offline'){
+              serv_io.sockets.connected[player.socket_id].emit('playerState', {
+                playerlist: envelope.res.playerlist
+              });
+            }
+          }
+        }
+        //==========================================================================
+        // code by KW
+        //==========================================================================
 
 
         if(envelope.res.event == util.SETSOCKET_EVENT){
@@ -229,6 +262,29 @@ function workerprocess(){
 
     console.log("permission ---> : " + _state.getEventspermission(stateModule));
     console.log("worker get:" + JSON.stringify(envelope, null, 2) );
+
+    //==========================================================================
+    // socket wants to get the player list from the worker
+    //==========================================================================
+    if(envelope.req.event == "newplayer"){
+      console.log("coreModule.players: " + JSON.stringify(coreModule.players));
+      let player = coreModule.players[envelope.req.msg.playerID];
+      player.socket_id = envelope.socket_id;
+      player.roomtag = envelope.req.hashTag;
+      player.playerID = envelope.req.msg.playerID;
+      player.playerName = envelope.req.msg.playerName;
+      player.avatarIndex = envelope.req.msg.avatarIndex;
+      player.state = "online";
+      envelope.res = {
+        event: "newplayer",
+        playerlist: coreModule.players
+      };
+      process.send(envelope);
+    }
+    //==========================================================================
+    // code by KW
+    //==========================================================================
+
     if(envelope.req.event == util.JOINGAME_EVENT){
       if(coreModule.players[envelope.req.msg.playerid] != null){
         console.log("workerprocess return");
@@ -405,9 +461,31 @@ function workerprocess(){
 
     }
 
+
+    // 判斷是否在等待列表，向所有正在等待中的玩家發送最新等待玩家列表
+    // 若有玩家在等待過程中離開則要於等待玩家列表中刪除該玩家，並重新發送
+    // if(isEventAccessable(envelope, util.READY_EVENT, stateModule) &&
+    //     !stateModule.readyList.includes(envelope.req.msg.playerID)){
+    //   stateModule.readyList.push(envelope.req.msg);
+    //   envelope.res = {
+    //     event: "ready",
+    //     playerlist: coreModule.players,
+    //     readylist: stateModule.readyList
+    //   };
+    //   process.send(envelope);
+    // }
+
     if(envelope.req.event == util.LEAVE_EVENT){
       for (let player in coreModule.players) {
         if(coreModule.players[player].socket_id == envelope.socket_id){
+
+          coreModule.players[player].state = "offline";
+          envelope.res = {
+            event: "deleteplayer",
+            playerlist: coreModule.players
+          };
+          process.send(envelope);
+
           delete coreModule.players[player];
           stateModule.playerNumber -= 1;
 

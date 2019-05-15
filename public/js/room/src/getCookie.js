@@ -9,7 +9,7 @@ var roomTag = function(){
 function getCookie(){
 	let self = {};
 	let cookies = document.cookie;
-	// console.log("cookies: " + cookies);
+	console.log("cookies: " + cookies);
 	let re = /playerName=(\w+)/;
 	self.playerName = re.exec(cookies.toString())[1];
 	re = /playerAvatar=(\w+)/;

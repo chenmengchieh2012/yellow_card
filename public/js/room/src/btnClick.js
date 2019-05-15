@@ -4,8 +4,25 @@ var btnClick = function(func){
 		MsgBlock_Factory(msgData, 'transmitted');
 		socket.emit('chatMsg', msgData);
 		$('#msg-input').val('');
-	}else{
-		// socket.emit(func, "player state"); // leave or start game
+	}else if(func === 'leaveGame'){
+		swal({
+			title: "您將離開遊戲!",
+		    text: "確定是否離開?",
+		    icon: "warning",
+		    buttons: ["不，我錯了", "對，我就是要離開"],
+		    dangerMode: true,
+		    closeOnConfirm: false,
+		    closeOnCancel: false
+		})
+	    .then((isConfirm) => {
+	    	if(isConfirm){   
+	        	window.location.reload();
+	        }else{     
+	            swal("沒事沒事", "下次小心點");   
+	        }
+	    });
+	}else if(func === 'startGame'){
+		startGame();
 	}
 }
 
