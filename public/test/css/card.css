@@ -1,0 +1,34 @@
+.cardset {
+  display: flex;
+  max-width: 400px;
+  flex-direction: row;
+}
+
+.card {
+  height: 200px;
+  width: 100px;
+  background-size: 100px 200px;
+  margin-right: -8px;
+/*  border-style: solid;
+  border-width: 5px;*/
+  background-image: url(../card.svg);
+  background-repeat: no-repeat;
+  flex-grow: 1;
+  transition: transform .25s;
+}
+
+.showcard{
+  flex: 0 0 100px;
+  margin-right: -8px;
+}
+
+.cardup{
+  margin-top: -8px;
+}
+
+.filter-green{
+    filter: invert(0.5) sepia(1) hue-rotate(200deg);
+}
+
+
+
