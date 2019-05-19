@@ -1,0 +1,73 @@
+body {
+  background: #777;
+}
+
+.base {
+  background-image: url(../black-linen.png);
+  background-color: #3f5c00;
+  border-radius:  1rem;
+  border-style: solid;
+  border-color: #000000;
+  border-width: 2px;
+}
+
+.sentence {
+  color: white;
+}
+
+.playground{
+  margin-bottom: 8rem;
+}
+
+.peoples {
+  height: 50%;
+  
+  
+  padding: 1rem !important;
+  margin-left: 4px !important;
+  margin-right: 4px !important;;
+}
+
+.person{
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.personname{
+  pointer-events: none;
+  cursor: default;
+  color: black;
+}
+
+.person:first-child {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.person:last-child {
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+.checkrow {
+  margin-top: -10rem;
+  margin-bottom: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .personname{
+    display: none;
+  }
+}
+
+
+@media only screen and (max-width: 480px) {
+  .personname {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .personname {
+    display: none;
+  }
+}

@@ -1,34 +1,88 @@
-.cardset {
+
+
+.textcards {
   display: flex;
-  max-width: 400px;
-  flex-direction: row;
+  /*margin-top: -8rem;*/
+  --distance: -4rem;
 }
-
-.card {
+.textcard {
   height: 200px;
-  width: 100px;
-  background-size: 100px 200px;
-  margin-right: -8px;
-/*  border-style: solid;
-  border-width: 5px;*/
-  background-image: url(../card.svg);
-  background-repeat: no-repeat;
-  flex-grow: 1;
-  transition: transform .25s;
+  width: 160px;
+  background: #FFFF33;
+  border-style: solid;
+  border-width: 2px;
+  border-radius:  1rem;
+  padding: 2rem;
+  box-shadow: 4px 4px 12px 1.3px rgba(0,0,0,0.75);
+  overflow: hidden;
+  transition: 0.2s;
 }
 
-.showcard{
-  flex: 0 0 100px;
-  margin-right: -8px;
+.textcard:not(:first-child) {
+  margin-left: var(--distance);
 }
 
-.cardup{
-  margin-top: -8px;
+.textcard:hover{
+  z-index: 10;
+  transform: translateY(-1rem);
 }
 
-.filter-green{
-    filter: invert(0.5) sepia(1) hue-rotate(200deg);
+.textcard:hover ~ .textcard {
+  transform: translateX(calc(var(--distance) * -1));
+}
+
+.questioncard {
+  height: 200px;
+  width: 160px;
+  border-radius:  1rem;
+  margin-bottom: 4rem;
+  padding: 2rem;
+  box-shadow: 4px 4px 12px 1.3px rgba(0,0,0,0.75);
+  overflow: hidden;
+  transition: 0.2s;
+  background-color: #A500CC;
+}
+
+.invisiabletextcards{
+  display: flex;
+  width:200px;
+  --distance: -152px;
+  margin: auto;
+}
+
+.invisiabletextcard{
+  height: 200px;
+  width: 160px;
+  background: #FFFF33;
+  border-style: solid;
+  border-width: 2px;
+  border-radius:  1rem;
+  padding: 2rem;
+  box-shadow: 2px 2px 12px 0.5px rgba(0,0,0,0.75);
+  transition: 0.2s;
+}
+
+.invisiabletextcard {
+  margin-right: var(--distance);
+  /*margin-left: calc(var(--distance) * 1));*/
 }
 
 
+@media only screen and (max-width: 768px) {
+  .invisiabletextcard {
+    visibility: hidden;
+  }
+}
 
+
+@media only screen and (max-width: 480px) {
+  .invisiabletextcard {
+    visibility: hidden;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .invisiabletextcard {
+    visibility: hidden;
+  }
+}
