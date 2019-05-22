@@ -71,6 +71,7 @@
 
 
 #chat-container {
+	position: absolute;
 	height: var(--chat-container-hieght);
 	overflow-y: scroll;
 }
