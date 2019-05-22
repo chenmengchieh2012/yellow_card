@@ -45,8 +45,9 @@ var appendState = function(self){
 	//off line: rgb(255, 82, 82);
 	let state_block = "\
 		\<li id=\"" + self.playerID + "\"\>\
-			\<img src=\"js/avatar_img/" + self.avatarIndex + ".png\" \
-    			alt=\"" + self.avatarIndex + "\" id=\"player-list-avatar\" \/\>\
+			\<img src=\"js/avatar_img/" + self.avatarIndex + ".png\"\
+    			alt=\"" + self.avatarIndex + "\"\
+    			 id=\"player-list-avatar\" \/\>\
     		\<div \
     			style=\"text-align: center; width: 80px\" \
     			id=\"" + self.playerID + "\"\>\

@@ -16,6 +16,11 @@ function createCore(){
 function createPlayer(){
   return {
     "socket_id":null,
+    "roomtag":0,
+    "playerID":0,
+    "playerName":0,
+    "avatarIndex":0,
+    "state":0,
     "cardsinhand":0,
     "losetimes":0
   }

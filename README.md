@@ -39,7 +39,7 @@
 1. playerState: 
 
    ```javascript
-   return ({
+   return (playerID:{
    	playerID: playerID,
    	playerName: playerName,
    	avatarIndex: avatarIndex,
@@ -61,11 +61,25 @@
 
    ```javascript
    return ({
-   	playerIndex: playerIndex,
+   	avatarIndex: avatarIndex,
        playerName: playerName,
-       msg: msg
+       msg: msg,
+       playerid: playerID,
+       roomtag: roomTag
    });
    ```
+
+4. ready:
+
+   ```javascript
+   return ({
+   	avatarIndex: avatarIndex,
+   	playerName: playerName,
+   	playerid: playerid
+   });
+   ```
+
+   (P.S: 接收到後在前台顯示一個 dialog 不斷更新正在等待中的玩家)
 
 ---
 

@@ -7,10 +7,20 @@ var data = getCookie();
 socket.on('connect', function(){
 	console.log("init room");
 	socket.emit('init_room', {
-		roomtag: data.roomtag,
-		playerID: data.playerID,
-		playerName: data.playerName,
-		avatarIndex: data.playerAvatar
+		event: "newplayer",
+		hashTag: data.roomtag,
+		msg: {
+			playerID: data.playerID,
+			playerName: data.playerName,
+			avatarIndex: data.playerAvatar
+		}
+	});
+	socket.emit('client_message', {
+		event: "setsocket",
+		hashTag: data.roomtag,
+		msg: {
+			playerid: data.playerID
+		}
 	});
 });
 
@@ -27,17 +37,32 @@ socket.on('chatMsg', function(res){
 //=====================================
 socket.on('playerState', function(state){
 	console.log('playerState update!\n' + JSON.stringify(state));
-	$.each(state, function(key, value){
-		console.log("key: " + key);
-		console.log("value: " + value);
+	$.each(state.playerlist, function(playerid, value){
+		console.log("playerid: " + playerid);
+		console.log("value: " + JSON.stringify(value));
 		playerState(value);
 	});
-	// playerState(state);
 });
 
 //=====================================
 // init the room
 //=====================================
-socket.on('startGame', function(playground){
-	startGame(playground);
+socket.on('ready', function(readylist){
+	console.log("readylist: " + JSON.stringify(readylist));
+	let playerNumber = readylist.playerNumber;
+	let readyNumber = readylist.readyNumber;
+	$.each(readylist.playerlist, function(playerid, value){
+		console.log("playerid: " + playerid);
+		console.log("value: " + JSON.stringify(value));
+		// waiting for all the players are ready to play
+		waiting_list();
+	});
 });
+
+//=====================================
+// get in playground
+//=====================================
+socket.on('startGame', function(playerlist){
+	
+});
+
