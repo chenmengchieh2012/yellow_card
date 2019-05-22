@@ -20,6 +20,7 @@
 
 #header {
 	text-align: center;
+		
 }
 
 #center {
@@ -68,9 +69,6 @@
 	width: var(--chat-width);
 }
 
-#chat-block {
-	height: var(--chat-block-hieght);
-}
 
 #chat-container {
 	height: var(--chat-container-hieght);
@@ -92,7 +90,12 @@
 }
 
 #msg-content {
+	position: absolute;
 	display: flex;
+}
+
+#chat-block {
+	height: var(--chat-block-hieght);
 }
 
 #msg {
