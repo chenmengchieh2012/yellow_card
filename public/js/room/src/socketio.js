@@ -47,8 +47,16 @@ socket.on('playerState', function(state){
 //=====================================
 // init the room
 //=====================================
-socket.on('ready', function(playerlist){
-	console.log(JSON.stringify(playerlist));
+socket.on('ready', function(readylist){
+	console.log("readylist: " + JSON.stringify(readylist));
+	let playerNumber = readylist.playerNumber;
+	let readyNumber = readylist.readyNumber;
+	$.each(readylist.playerlist, function(playerid, value){
+		console.log("playerid: " + playerid);
+		console.log("value: " + JSON.stringify(value));
+		// waiting for all the players are ready to play
+		waiting_list();
+	});
 });
 
 //=====================================

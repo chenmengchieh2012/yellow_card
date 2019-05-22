@@ -4,7 +4,8 @@ function createState(){
   return{
     "playerNumber":0,
     "readyNumber":0,
-    "readyList":[],
+    "readyPlayersNum":0,
+    "readyList":{},
     "leader":[],
     "members":[],
     "rememberQuestion":[],

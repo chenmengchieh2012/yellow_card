@@ -3,7 +3,6 @@ var startGame = function(){
 	// if(onlineList.length > 3){
 	// 	// swal("成功!", "但是我還沒寫同步進入遊戲", "success");
 	// 	socket.emit('startGame', {
-	// 		event: "ready",
 	// 		hashTag: data.roomtag,
 	// 		msg: {
 	// 			playerID: data.playerID,
@@ -16,7 +15,6 @@ var startGame = function(){
 	// }
 
 	socket.emit('startGame', {
-		event: "ready",
 		hashTag: data.roomtag,
 		msg: {
 			playerID: data.playerID,

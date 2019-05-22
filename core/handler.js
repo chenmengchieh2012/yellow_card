@@ -62,7 +62,11 @@ function socketioInit(){
       let req = {
         event: "ready",
         hashTag: data.hashTag,
-        msg: data.msg
+        msg: {
+          playerID: data.msg.playerID,
+          playerName: data.msg.playerName,
+          avatarIndex: data.msg.avatarIndex
+        }
       }
       sendMessagetoWorker(req, socket.id);
     });
@@ -143,13 +147,14 @@ module.exports = {
         // socket wants to get the player list from the worker
         //==========================================================================
         if(envelope.res.event == "ready"){
-          for(player in envelope.res.readylist){
-            for(playerid in envelope.res.playerlist){
-              if(player.playerID == playerid){
-                serv_io.sockets.connected[playerid.socket_id].emit('ready', 
-                  envelope.res.readylist);
-              }
-            }
+          for(playerid in envelope.res.readylist){
+            let player = envelope.res.readylist[playerid];
+            console.log("ready player: " + JSON.stringify(player));
+            serv_io.sockets.connected[player.socket_id].emit('ready',{
+              readylist: envelope.res.readylist,
+              playerNumber: envelope.res.playerNumber,
+              readyNumber: envelope.res.readyNumber
+            });
           }
         }
 
@@ -464,16 +469,23 @@ function workerprocess(){
 
     // 判斷是否在等待列表，向所有正在等待中的玩家發送最新等待玩家列表
     // 若有玩家在等待過程中離開則要於等待玩家列表中刪除該玩家，並重新發送
-    // if(isEventAccessable(envelope, util.READY_EVENT, stateModule) &&
-    //     !stateModule.readyList.includes(envelope.req.msg.playerID)){
-    //   stateModule.readyList.push(envelope.req.msg);
-    //   envelope.res = {
-    //     event: "ready",
-    //     playerlist: coreModule.players,
-    //     readylist: stateModule.readyList
-    //   };
-    //   process.send(envelope);
-    // }
+    if(envelope.req.event == util.READY_EVENT){
+      envelope.req.msg.socket_id = envelope.socket_id;
+      stateModule.readyList[envelope.req.msg.playerID] = envelope.req.msg;
+      console.log("stateModule.readyList: " + JSON.stringify(stateModule.readyList));
+      let count = 0;
+      for(i in stateModule.readyList){
+        count += 1;
+      }
+      stateModule.readyPlayersNum = count;
+      envelope.res = {
+        event: "ready",
+        readylist: stateModule.readyList,
+        playerNumber: stateModule.playerNumber,
+        readyNumber: stateModule.readyPlayersNum
+      };
+      process.send(envelope);
+    }
 
     if(envelope.req.event == util.LEAVE_EVENT){
       for (let player in coreModule.players) {
@@ -486,8 +498,20 @@ function workerprocess(){
           };
           process.send(envelope);
 
-          delete coreModule.players[player];
           stateModule.playerNumber -= 1;
+          stateModule.readyPlayersNum -= 1;
+
+          delete stateModule.readyList[player];
+
+          envelope.res = {
+            event: "ready",
+            readylist: stateModule.readyList,
+            playerNumber: stateModule.playerNumber,
+            readyNumber: stateModule.readyPlayersNum
+          };
+          process.send(envelope);
+
+          delete coreModule.players[player];
 
           //[TBD]
           // 1. change leader
