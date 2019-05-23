@@ -18,3 +18,12 @@ $(document).ready(function(){
 	avatar.setAttribute('src', "js/avatar_img/" + cookie.playerAvatar + ".png");
 	avatar.setAttribute('alt', cookie.playerAvatar);
 });
+
+function resizeWin(){
+	if(window.outerWidth < 1780){
+		console.log('window.outerWidth: ' + window.outerWidth);
+		$('body').attr('style', 'width: 1780px;');
+	}else{
+		$('body').attr('style', 'width: auto;');
+	}
+}

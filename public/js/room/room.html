@@ -30,7 +30,7 @@
 	<link rel="stylesheet" type="text/css" href="js/room/css/avatar.css">
 	<link rel="stylesheet" type="text/css" href="js/room/css/body.css">
 </head>
-<body>
+<body onresize="resizeWin()">
 	<div id="header">
 		<div class="ts massive heading fluid center aligned slate">
 		    <div class="image">
@@ -89,12 +89,14 @@
 			<div class="ts three column very narrow container grid">
     			<div class="column">
     				<div class="ts grid">
-						<div class="four wide column">
-					        <img src="js/avatar_img/3.png" 
-					        	alt="3" id="selfAvatar" />
-					    </div>
-					    <div class="twelve wide column">
-						    <h4 id="playerName">玩家名字</h4>
+						<img class="ts avatar image" 
+							src="js/avatar_img/3.png" 
+							alt="3" id="selfAvatar" />
+						<div style="text-align: center; 
+							line-height: 36px; height: 36px; 
+							font-size: 24px; width: 100px;"
+							id="playerName">
+							玩家名字
 						</div>
 					</div>
     			</div>
@@ -114,25 +116,22 @@
 				</div>
 			</div>
 			<div id="typein-block">
-				<div class="ts form">
-				    <div class="inline field">
-				        <div class="ts circular fluid input">
-				        	<input id="msg-input" type="text" placeholder="請開始你的幹話..."
-					        	autocomplete="off" 
-					        	style="border-width: 2px;" />
-						</div>
-				        <button class="ts circular icon button"
-				        	onclick="btnClick('chatMsg')">
-						    <i class="send icon"></i>
-						</button>
-				    </div>
+				<div class="ts circular input">
+		        	<input id="msg-input" type="text" placeholder="請開始你的幹話..."
+			        	autocomplete="off" 
+			        	style="border-width: 2px; width: 720px; float: left;" />
 				</div>
+		        <button class="ts circular icon button"
+		        	onclick="btnClick('chatMsg')"
+		        	style="float: right;">
+				    <i class="send icon"></i>
+				</button>
 			</div>
 		</div>
 		<div id="btn">
 			<div id="left-btn">
 				<button class="ts positive left floated button" type="submit"  
-				onclick="btnClick('startGame')">開始遊戲</button>
+				onclick="btnClick('startGame')">準備</button>
 			</div>
 			<div id="right-btn">
 				<button class="ts negative right floated button" type="submit"
@@ -152,7 +151,6 @@
 
 	<script src="js/room/src/socketio.js"></script>
 
-	<script src="js/room/src/waiting_list.js"></script>
 	<script src="js/room/src/observer.js"></script>
 	<script src="js/room/src/playerState.js"></script>
 	<script src="js/room/src/startFunc.js"></script>

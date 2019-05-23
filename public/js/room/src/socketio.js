@@ -51,11 +51,12 @@ socket.on('ready', function(readylist){
 	console.log("readylist: " + JSON.stringify(readylist));
 	let playerNumber = readylist.playerNumber;
 	let readyNumber = readylist.readyNumber;
-	$.each(readylist.playerlist, function(playerid, value){
+	$.each(readylist.readylist, function(playerid, value){
 		console.log("playerid: " + playerid);
 		console.log("value: " + JSON.stringify(value));
 		// waiting for all the players are ready to play
-		waiting_list();
+		// $('li[id="' + playerid + '"] div:nth-child(2) > div')
+		// 	.attr('style', 'display: block;');
 	});
 });
 

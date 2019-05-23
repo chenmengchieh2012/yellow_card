@@ -51,8 +51,14 @@ var appendState = function(self){
     		\<div \
     			style=\"text-align: center; width: 80px\" \
     			id=\"" + self.playerID + "\"\>\
-    			\<p style=\"color: rgb(1, 178, 104);\"\>" +
+    			\<p style=\"color: rgb(1, 178, 104); \
+    					line-height: 24px; height: 24px;\"\>" +
     				self.playerName + "\<\/p\>\
+    		\<\/div\>\
+    		\<div style=\"text-align: right; width: 90px\"\>\
+    			\<div id=\"idReadyIcon\"\>\
+    				\<i class=\"checkmark icon\"\>\<\/i\>\
+    			\<\/div\>\
     		\<\/div\>\
 		\<\/li\>";
 	$('#list').append(state_block);

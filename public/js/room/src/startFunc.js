@@ -13,7 +13,7 @@ var startGame = function(){
 	// }else{
 	// 	swal("注意!", "玩家人數須滿4人", "error");
 	// }
-
+	$('#idReadyIcon').attr('style', 'display:block');
 	socket.emit('startGame', {
 		hashTag: data.roomtag,
 		msg: {

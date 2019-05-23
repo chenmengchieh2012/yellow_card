@@ -5,17 +5,24 @@
 	--player-list-block-width: 450px;
 	--right-side-width: var(--left-side-width);
 	--right-side-hieght: 320px;
-	--player-room-info-block-hieght: 60px;
-	--chat-hieght: 650px;
+	--player-room-info-block-hieght: 50px;
+	--chat-hieght: 550px;
 	--chat-width: 780px;
 	--player-state-block-hieght: 200px;
-	--chat-block-hieght: 550px;
-	--chat-container-hieght: 530px;
+	--chat-block-hieght: 450px;
+	--chat-container-hieght: 450px;
+	--typein-block-hieght: 45px;
 	--msg-box-width: auto;
 	--footer-hieght: 80px;
 	--form-width: auto;
 	--btn-width: var(--chat-width);
-	--btn-hieght: 80px;
+	--btn-hieght: 60px;
+}
+
+html, body {
+	width: auto;
+	height: 980;
+	overflow: auto;
 }
 
 #header {
@@ -71,6 +78,7 @@
 
 
 #chat-container {
+	position: absolute;
 	height: var(--chat-container-hieght);
 	overflow-y: scroll;
 }
@@ -105,6 +113,11 @@
 	width: auto;
 }
 
+#typein-block {
+	margin-top: 15px;
+	height: var(--typein-block-hieght);
+}
+
 #form {
 	width: var(--form-width);
 }
@@ -122,3 +135,28 @@
 	float: bottom;
 	clear: both;
 }
+
+#idReadyIcon {
+	display: none;
+}
+
+/*
+#idReadyIcon {
+	width: 24px;
+	-webkit-animation: idReadyIcon 1s infinite;			
+	-moz-animation: idReadyIcon 1s infinite;
+	-ms-animation: idReadyIcon 1s infinite; 			
+	animation: idReadyIcon 1s infinite;
+	-webkit-animation-timing-function: linear;
+	-moz-animation-timing-function: linear;		
+	-ms-animation-timing-function: linear;
+	animation-timing-function: linear;
+}
+
+@keyframes idReadyIcon {
+	100%{ 
+		-moz-transform: rotate(360deg);
+		-ms-transform: rotate(360deg);
+		transform: rotate(360deg)
+	}
+}*/

@@ -1,3 +1,0 @@
-function waiting_list(){
-	
-}
