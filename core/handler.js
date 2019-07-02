@@ -244,6 +244,22 @@ module.exports = {
               .emit('response',envelope.res);
           }
         }
+
+        if(envelope.res.event == util.CHANGELEADER_EVENT){
+          for (k in envelope.res.players) {
+            console.log(k);
+            serv_io.sockets.connected[envelope.res.players[k].socket_id]
+              .emit('response',envelope.res);
+          }
+        }
+
+        if(envelope.res.event == util.READY_EVENT){
+          for (k in envelope.res.players) {
+            console.log(k);
+            serv_io.sockets.connected[envelope.res.players[k].socket_id]
+              .emit('response',envelope.res);
+          }
+        }
                 
       });
 
@@ -296,7 +312,10 @@ function workerprocess(){
         return;
       }
       core.joinGame(coreModule,envelope.req.msg);
-      console.log("worker join" + JSON.stringify(coreModule) );      
+      console.log("worker join" + JSON.stringify(coreModule) );
+      if(_state.getEventspermission(stateModule) == util.READY_EVENT){
+        stateModule.playerNumber += 1;
+      }     
     }
 
     //test socketio message: {"event": "setsocket","hashTag": "testhashtag","msg":{"playerid": "WTF"}}
@@ -311,9 +330,7 @@ function workerprocess(){
         };
         process.send(envelope);
       }
-      if(_state.getEventspermission(stateModule) == util.READY_EVENT){
-        stateModule.playerNumber += 1;
-      }
+      
     }
 
     if(isEventAccessable(envelope, util.GET_QUESTIONCARD_EVENT,stateModule) && 
@@ -439,6 +456,9 @@ function workerprocess(){
           }
         }
         stateModule.rememberText = [];
+        stateModule.rememberQuestion = [];
+        stateModule.readyNumber =0;
+        stateModule.round += 1;
         stateModule.eventsize -= 1;
     }
 
@@ -461,6 +481,14 @@ function workerprocess(){
           });
         }        
       }
+
+      envelope.res = {
+        event: util.READY_EVENT,
+        playerid: envelope.req.msg.playerid,
+        players: coreModule.players
+      };
+      process.send(envelope);
+
       stateModule.rememberPlayers.push(envelope.req.msg.playerid);
       stateModule.readyNumber += 1;
 
@@ -527,7 +555,13 @@ function workerprocess(){
       stateModule.state == 0 && 
       stateModule.playerNumber != 0){
       _state.chooseLeader(stateModule, coreModule.players, stateModule.playerNumber, stateModule.round);
+      envelope.res = {
+        event: util.CHANGELEADER_EVENT,
+        players: coreModule.players,
+        leader: stateModule.leader
+      };
 
+      process.send(envelope);
       //[TBD] chooseLeader and tell the leader he/she is the leader.
 
 
@@ -542,10 +576,7 @@ function workerprocess(){
 
       //[TBD] (DONE) change the ststModule.playerNumber to member's size
 
-      //[TBD] (DONE) change the eventNumber into rememberTextcard
-      stateModule.eventsize = stateModule.rememberText.length;
-
-      //change to show card
+     //change to show card
       stateModule.state = ((stateModule.state+1)%_state.TOTAL_STATE);
       stateModule.rememberPlayers = [];
       envelope.res = {
@@ -563,6 +594,8 @@ function workerprocess(){
         stateModule.eventsize = _state.STATE[stateModule.state].eventsize
       }else if(_state.STATE[stateModule.state].geteventsize == util.KEY_PLAYERS){
         stateModule.eventsize = stateModule.playerNumber;
+      }else if(_state.STATE[stateModule.state].geteventsize == util.KEY_REMEMBERTEXT){
+        stateModule.eventsize = stateModule.rememberText.length;
       }
       prestate = ((prestate + 1)%_state.TOTAL_STATE);
     }
